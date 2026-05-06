@@ -25,6 +25,7 @@ tailwind.config = {
 </script>
 <style>
   html,body{height:100%;}
+  html{ font-size: 19px; }  /* global upscale for stage projection */
   body{
     font-family: Inter, ui-sans-serif, system-ui, sans-serif;
     background: radial-gradient(1200px 700px at 75% -10%, rgba(139,92,246,.18), transparent 60%),
@@ -85,9 +86,12 @@ tailwind.config = {
   }
   .stage-btn.primary:hover{ filter: brightness(1.08); }
   .chip{
-    padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight:600; letter-spacing:.04em;
+    padding: 5px 12px; border-radius: 9999px; font-size: 13px; font-weight:600; letter-spacing:.04em;
     text-transform: uppercase; border:1px solid rgba(255,255,255,.10);
   }
+  /* readability bumps for stage projection */
+  .text-\[10px\]{ font-size: 12px !important; }
+  .text-\[11px\]{ font-size: 13px !important; }
   .agent-active{ animation: agentGlow 1.6s ease-in-out infinite; }
   @keyframes agentGlow{
     0%,100%{ box-shadow: 0 0 0 0 rgba(167,139,250,.0);}
