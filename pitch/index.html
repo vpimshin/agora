@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<title>AGORA — Hackathon Pitch</title>
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
+    colors: {
+      flow:  { 400:'#fbbf24', 500:'#f59e0b' },
+      emp:   { 400:'#22d3ee', 500:'#06b6d4' },
+      focus: { 400:'#a78bfa', 500:'#8b5cf6' },
+      good:  { 400:'#34d399', 500:'#10b981' },
+    }
+  }}
+};
+</script>
+<style>
+  html{ font-size: 20px; }
+  html,body{ height:100%; }
+  body{
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    color: #e6e9f2;
+    background:
+      radial-gradient(1200px 700px at 75% -10%, rgba(139,92,246,.20), transparent 60%),
+      radial-gradient(900px 600px at 10% 110%, rgba(34,211,238,.14), transparent 60%),
+      #05060a;
+    overflow: hidden;
+    letter-spacing: -0.01em;
+  }
+  .glass{ background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+          border:1px solid rgba(255,255,255,.08); backdrop-filter: blur(10px); }
+  .glass-strong{ background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025));
+          border:1px solid rgba(255,255,255,.12); backdrop-filter: blur(14px); }
+  .grid-bg{
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+  .chip{ padding:6px 14px; border-radius:9999px; font-size:14px; font-weight:600;
+         letter-spacing:.04em; text-transform:uppercase; border:1px solid rgba(255,255,255,.12); }
+  .slide{ display:none; }
+  .slide.active{ display:flex; animation: slideIn .55s ease both; }
+  @keyframes slideIn{ from{opacity:0; transform: translateY(12px); filter: blur(4px);}
+                      to{opacity:1; transform:none; filter:none;} }
+  .stage-btn{ background: rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+              transition: all .15s ease; }
+  .stage-btn:hover{ background: rgba(255,255,255,.14); transform: translateY(-1px); }
+  .stage-btn.primary{
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    border-color: rgba(255,255,255,.16);
+    box-shadow: 0 14px 40px -10px rgba(139,92,246,.7);
+  }
+  .stage-btn.primary:hover{ filter: brightness(1.08); }
+  .stage-btn.cta{
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+    border-color: rgba(255,255,255,.16);
+    box-shadow: 0 18px 50px -12px rgba(245,158,11,.65);
+  }
+  .breath{ animation: breath 4s ease-in-out infinite; }
+  @keyframes breath{ 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.06);} }
+  .ring-glow{ box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 24px 60px -20px rgba(139,92,246,.45); }
+  kbd{ font: 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+       padding: 3px 7px; background: rgba(255,255,255,.10); border-radius: 6px; color:#fff; }
+  @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body class="min-h-screen w-screen">
+
+<!-- TOP BAR -->
+<header class="fixed top-0 inset-x-0 z-40 px-10 py-5 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-focus-500 to-emp-500 grid place-items-center text-white font-black">A</div>
+    <div>
+      <div class="text-sm font-semibold tracking-wide">AGORA</div>
+      <div class="text-xs text-white/55 -mt-0.5">Pitch · 5 min</div>
+    </div>
+  </div>
+  <div class="glass rounded-full px-4 py-1.5 text-sm flex items-center gap-2">
+    <span class="w-2 h-2 rounded-full bg-good-400"></span>
+    <span class="text-white/75">Hackathon · 2026</span>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="absolute inset-0 pt-24 pb-24 px-12">
+<!-- ============= SLIDE 1 — TITLE ============= -->
+<section class="slide active h-full" data-name="Title">
+  <div class="h-full w-full grid-bg rounded-3xl glass-strong relative overflow-hidden">
+    <div class="absolute -top-32 -left-24 w-[34rem] h-[34rem] rounded-full bg-focus-500/25 blur-3xl"></div>
+    <div class="absolute -bottom-32 -right-24 w-[36rem] h-[36rem] rounded-full bg-emp-500/22 blur-3xl"></div>
+    <div class="relative h-full grid grid-cols-12 gap-10 p-14">
+      <div class="col-span-7 flex flex-col justify-center">
+        <div class="chip text-white/75 mb-7 inline-flex w-fit">A learning platform · spec-driven</div>
+        <h1 class="text-7xl font-black leading-[1.02] tracking-tight">
+          <span class="bg-gradient-to-r from-focus-400 via-emp-400 to-flow-400 bg-clip-text text-transparent">AGORA</span>
+        </h1>
+        <p class="mt-3 text-3xl text-white/80 font-medium">Five agents. One learner. Verifiable outcomes.</p>
+        <p class="mt-7 text-xl text-white/60 max-w-2xl leading-relaxed">
+          We rebuilt a learning platform from scratch — not as code first, but as <b class="text-white">spec first</b>. Then we showed it can ship.
+        </p>
+        <div class="mt-10 flex items-center gap-3">
+          <div class="glass rounded-full px-4 py-2 text-base">21 SDD docs</div>
+          <div class="glass rounded-full px-4 py-2 text-base">5 ADRs</div>
+          <div class="glass rounded-full px-4 py-2 text-base">6 agent prompts</div>
+          <div class="glass rounded-full px-4 py-2 text-base">live demo</div>
+        </div>
+      </div>
+      <div class="col-span-5 relative">
+        <div class="absolute inset-0 grid place-items-center">
+          <div class="relative w-[32rem] h-[32rem]">
+            <div class="absolute inset-0 rounded-full border border-white/10"></div>
+            <div class="absolute inset-10 rounded-full border border-white/10"></div>
+            <div class="absolute inset-20 rounded-full border border-white/10"></div>
+            <!-- agents -->
+            <div class="absolute breath" style="left:200px; top:0; width:88px; height:88px;">
+              <div class="w-full h-full rounded-2xl glass-strong grid place-items-center text-4xl">🧭</div>
+            </div>
+            <div class="absolute breath" style="left:380px; top:140px; width:88px; height:88px; animation-delay:.4s">
+              <div class="w-full h-full rounded-2xl glass-strong grid place-items-center text-4xl">✅</div>
+            </div>
+            <div class="absolute breath" style="left:330px; top:340px; width:88px; height:88px; animation-delay:.8s">
+              <div class="w-full h-full rounded-2xl glass-strong grid place-items-center text-4xl">📚</div>
+            </div>
+            <div class="absolute breath" style="left:75px; top:340px; width:88px; height:88px; animation-delay:1.2s">
+              <div class="w-full h-full rounded-2xl glass-strong grid place-items-center text-4xl">💛</div>
+            </div>
+            <div class="absolute breath" style="left:25px; top:140px; width:88px; height:88px; animation-delay:1.6s">
+              <div class="w-full h-full rounded-2xl glass-strong grid place-items-center text-4xl">🤝</div>
+            </div>
+            <div class="absolute inset-0 grid place-items-center">
+              <div class="w-32 h-32 rounded-3xl bg-gradient-to-br from-focus-500 to-emp-500 grid place-items-center text-6xl ring-glow">🎓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= SLIDE 2 — PROBLEM ============= -->
+<section class="slide h-full" data-name="Problem">
+  <div class="h-full w-full grid grid-cols-12 gap-8">
+    <section class="col-span-7 glass-strong rounded-3xl p-12 relative overflow-hidden">
+      <div class="absolute -top-24 -right-24 w-[26rem] h-[26rem] rounded-full bg-red-500/15 blur-3xl"></div>
+      <div class="relative">
+        <div class="chip text-white/75 mb-6 inline-flex">01 · The problem</div>
+        <h2 class="text-6xl font-black tracking-tight leading-[1.05]">Online learning<br/>is <span class="text-red-400">broken</span> for adults.</h2>
+        <p class="mt-6 text-2xl text-white/70 leading-relaxed max-w-2xl">
+          We watch videos. We collect certificates. We forget by Friday.<br/>
+          The system optimizes for <i>completion</i> — not <i>capability</i>.
+        </p>
+        <div class="mt-10 grid grid-cols-2 gap-4 text-lg">
+          <div class="glass rounded-2xl p-5 border border-red-400/20">
+            <div class="text-red-400 font-bold mb-1">3% completion</div>
+            <div class="text-white/65 text-base">average MOOC finish rate</div>
+          </div>
+          <div class="glass rounded-2xl p-5 border border-red-400/20">
+            <div class="text-red-400 font-bold mb-1">~70% forgotten</div>
+            <div class="text-white/65 text-base">of new material within 24h (Ebbinghaus)</div>
+          </div>
+          <div class="glass rounded-2xl p-5 border border-red-400/20">
+            <div class="text-red-400 font-bold mb-1">"Confidence ≠ competence"</div>
+            <div class="text-white/65 text-base">subjective self-assessment misleads</div>
+          </div>
+          <div class="glass rounded-2xl p-5 border border-red-400/20">
+            <div class="text-red-400 font-bold mb-1">Certificates ≠ proof</div>
+            <div class="text-white/65 text-base">unverifiable, non-portable, opaque</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <aside class="col-span-5 glass-strong rounded-3xl p-10 flex flex-col justify-center">
+      <div class="chip text-white/75 mb-6 w-fit">Maya · our test user</div>
+      <div class="flex items-center gap-4 mb-6">
+        <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-flow-400 to-flow-500 grid place-items-center text-4xl">👩🏽‍💻</div>
+        <div>
+          <div class="text-2xl font-bold">Maya, 26</div>
+          <div class="text-white/60">Junior SWE · 45 min/day · stuck on system design</div>
+        </div>
+      </div>
+      <blockquote class="text-2xl italic font-medium leading-snug text-white/85 border-l-4 border-flow-400 pl-5">
+        "I've taken three courses on system design. I can <i>recite</i> CAP. I still freeze at the whiteboard."
+      </blockquote>
+      <div class="mt-8 text-base text-white/55">
+        She is not lazy. She is not unmotivated. The product is wrong.
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============= SLIDE 3 — SOLUTION ============= -->
+<section class="slide h-full" data-name="Solution">
+  <div class="h-full w-full glass-strong rounded-3xl p-12 relative overflow-hidden">
+    <div class="absolute -top-32 -left-12 w-[32rem] h-[32rem] rounded-full bg-focus-500/25 blur-3xl"></div>
+    <div class="absolute -bottom-32 -right-12 w-[32rem] h-[32rem] rounded-full bg-emp-500/20 blur-3xl"></div>
+    <div class="relative h-full flex flex-col">
+      <div>
+        <div class="chip text-white/75 mb-5 inline-flex">02 · The solution</div>
+        <h2 class="text-6xl font-black tracking-tight leading-[1.05]">A council of <span class="bg-gradient-to-r from-focus-400 to-emp-400 bg-clip-text text-transparent">five agents</span>.<br/>One learning contract.</h2>
+        <p class="mt-5 text-xl text-white/65 max-w-4xl">
+          Not a chatbot. Not a course catalog. A coordinated multi-agent system, each role auditable, each output verifiable.
+        </p>
+      </div>
+      <div class="mt-10 grid grid-cols-5 gap-5 flex-1">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= SLIDE 4 — HOW IT WORKS ============= -->
+<section class="slide h-full" data-name="How it works">
+  <div class="h-full w-full grid grid-cols-12 gap-8">
+    <section class="col-span-12 glass-strong rounded-3xl p-12 relative overflow-hidden">
+      <div class="chip text-white/75 mb-5 inline-flex">03 · How it works</div>
+      <h2 class="text-6xl font-black tracking-tight leading-[1.05]">Goal → Contract → Practice → Proof.</h2>
+      <p class="mt-4 text-xl text-white/65 max-w-4xl">A four-step loop. Every step produces an artefact you can audit, replay, or revoke.</p>
+
+      <div class="mt-10 grid grid-cols-4 gap-5">
+        <!-- Step 1 -->
+        <div class="glass rounded-2xl p-6 border border-focus-500/30 relative">
+          <div class="text-5xl mb-3">🎯</div>
+          <div class="text-focus-400 text-sm font-bold uppercase tracking-wider">Step 1</div>
+          <div class="text-2xl font-bold mt-1">Goal capture</div>
+          <p class="mt-3 text-base text-white/65 leading-snug">Pedagogy paraphrases. Verifier insists on objectivity. Curator scopes. Together they negotiate a contract <i>with</i> the learner.</p>
+          <div class="mt-4 text-sm text-white/40 font-mono">→ rubric.json</div>
+        </div>
+        <!-- Step 2 -->
+        <div class="glass rounded-2xl p-6 border border-emp-500/30 relative">
+          <div class="text-5xl mb-3">🗺️</div>
+          <div class="text-emp-400 text-sm font-bold uppercase tracking-wider">Step 2</div>
+          <div class="text-2xl font-bold mt-1">Living map</div>
+          <p class="mt-3 text-base text-white/65 leading-snug">Curator builds a personalized knowledge graph. Drops 14× more results than it keeps. Every concept tied to a real artefact.</p>
+          <div class="mt-4 text-sm text-white/40 font-mono">→ knowledge_graph.ttl</div>
+        </div>
+        <!-- Step 3 -->
+        <div class="glass rounded-2xl p-6 border border-flow-500/30 relative">
+          <div class="text-5xl mb-3">📅</div>
+          <div class="text-flow-400 text-sm font-bold uppercase tracking-wider">Step 3</div>
+          <div class="text-2xl font-bold mt-1">Daily practice</div>
+          <p class="mt-3 text-base text-white/65 leading-snug">Companion plans 45 min/day, energy-aware. Empathy detects struggle and shrinks the task — never the person.</p>
+          <div class="mt-4 text-sm text-white/40 font-mono">→ session.log</div>
+        </div>
+        <!-- Step 4 -->
+        <div class="glass rounded-2xl p-6 border border-good-500/30 relative">
+          <div class="text-5xl mb-3">🎖️</div>
+          <div class="text-good-400 text-sm font-bold uppercase tracking-wider">Step 4</div>
+          <div class="text-2xl font-bold mt-1">Verifiable proof</div>
+          <p class="mt-3 text-base text-white/65 leading-snug">Open Badges 3.0 + W3C VC. Signed, portable, revocable. The learner owns the credential — not the platform.</p>
+          <div class="mt-4 text-sm text-white/40 font-mono">→ credential.jsonld</div>
+        </div>
+      </div>
+
+      <div class="mt-10 grid grid-cols-3 gap-5">
+        <div class="glass rounded-xl p-4 text-base">🔒 <b>Private by default</b> — user data never trains models</div>
+        <div class="glass rounded-xl p-4 text-base">🧠 <b>Auditable reasoning</b> — every agent step is logged</div>
+        <div class="glass rounded-xl p-4 text-base">⚖️ <b>Anti-Goodhart</b> — Verifier rejects gameable metrics</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- ============= SLIDE 5 — SDD APPROACH ============= -->
+<section class="slide h-full" data-name="Spec-Driven">
+  <div class="h-full w-full grid grid-cols-12 gap-8">
+    <section class="col-span-7 glass-strong rounded-3xl p-12 relative overflow-hidden">
+      <div class="absolute -top-24 -right-12 w-[24rem] h-[24rem] rounded-full bg-focus-500/22 blur-3xl"></div>
+      <div class="relative">
+        <div class="chip text-white/75 mb-5 inline-flex">04 · Why we built it spec-first</div>
+        <h2 class="text-6xl font-black tracking-tight leading-[1.05]">We wrote the <span class="text-focus-400">spec</span><br/>before we wrote a line.</h2>
+        <p class="mt-6 text-xl text-white/70 leading-relaxed">
+          Most hackathon projects are <i>vibes plus duct tape</i>. We took a different bet:
+          <b class="text-white">if AI agents can build the code from the spec, then the spec <i>is</i> the product.</b>
+        </p>
+        <div class="mt-8 grid grid-cols-2 gap-4 text-base">
+          <div class="glass rounded-xl p-4"><b>21 SDD docs</b><br/><span class="text-white/55">vision → architecture → agent contracts</span></div>
+          <div class="glass rounded-xl p-4"><b>5 ADRs</b><br/><span class="text-white/55">every irreversible choice, recorded</span></div>
+          <div class="glass rounded-xl p-4"><b>6 agent prompts</b><br/><span class="text-white/55">guardrails encoded, not hoped for</span></div>
+          <div class="glass rounded-xl p-4"><b>1 glossary</b><br/><span class="text-white/55">no two team members mean different things</span></div>
+        </div>
+      </div>
+    </section>
+    <aside class="col-span-5 glass-strong rounded-3xl p-10 flex flex-col">
+      <div class="chip text-white/75 mb-5 w-fit">Repo at a glance</div>
+      <div class="font-mono text-sm leading-relaxed glass rounded-2xl p-5 flex-1">
+<pre class="whitespace-pre">
+docs/
+├── 00_VISION.md
+├── 01_PRINCIPLES.md
+├── 02_PERSONAS.md
+├── 03_USER_JOURNEYS.md
+├── 04_AGENT_ROLES.md
+├── 05_KNOWLEDGE_GRAPH.md
+├── 06_TOKEN_ECONOMY.md
+├── 07_EMPATHY_LOOP.md
+├── 08_VERIFIABLE_CREDENTIALS.md
+├── 09_DATA_MODEL.md
+├── 10_API_CONTRACTS.md
+├── 11_SECURITY_PRIVACY.md
+│   ⋮  (21 in total)
+├── adr/   ← decisions
+└── prompts/ ← agent system prompts
+</pre>
+      </div>
+      <div class="mt-5 text-base text-white/65">
+        🪄 <b>Result:</b> any new contributor — human or AI — onboards in 30 minutes by reading docs in order.
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============= SLIDE 6 — LESSONS LEARNED ============= -->
+<section class="slide h-full" data-name="Lessons">
+  <div class="h-full w-full glass-strong rounded-3xl p-12 relative overflow-hidden">
+    <div class="absolute -top-24 -left-12 w-[28rem] h-[28rem] rounded-full bg-emp-500/22 blur-3xl"></div>
+    <div class="absolute -bottom-24 -right-12 w-[28rem] h-[28rem] rounded-full bg-flow-500/18 blur-3xl"></div>
+    <div class="relative h-full flex flex-col">
+      <div>
+        <div class="chip text-white/75 mb-5 inline-flex">05 · Lessons learned</div>
+        <h2 class="text-6xl font-black tracking-tight leading-[1.05]">What was easy.<br/>What burned us.</h2>
+      </div>
+      <div class="mt-10 grid grid-cols-2 gap-8 flex-1">
+        <!-- EASY / WORKED -->
+        <div class="flex flex-col">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-12 h-12 rounded-2xl bg-good-500/20 grid place-items-center text-3xl">✅</div>
+            <div>
+              <div class="text-good-400 text-sm font-bold uppercase tracking-wider">What flowed</div>
+              <div class="text-2xl font-bold">The spec did the heavy lifting</div>
+            </div>
+          </div>
+          <ul class="space-y-3 text-lg flex-1">
+            <li class="glass rounded-xl p-4 border border-good-500/20"><b>Multi-agent split</b> — once roles were named, the system designed itself.</li>
+            <li class="glass rounded-xl p-4 border border-good-500/20"><b>Empathy as a UI palette</b> — visualizing emotional state as color was instantly readable.</li>
+            <li class="glass rounded-xl p-4 border border-good-500/20"><b>OB 3.0 / W3C VC</b> — open standards meant zero vendor lock-in & one afternoon of integration design.</li>
+            <li class="glass rounded-xl p-4 border border-good-500/20"><b>Glossary first</b> — a single doc killed 80% of "wait, what do you mean by…" arguments.</li>
+          </ul>
+        </div>
+        <!-- HARD -->
+        <div class="flex flex-col">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-12 h-12 rounded-2xl bg-flow-500/20 grid place-items-center text-3xl">🔥</div>
+            <div>
+              <div class="text-flow-400 text-sm font-bold uppercase tracking-wider">What burned</div>
+              <div class="text-2xl font-bold">Agents like to disagree</div>
+            </div>
+          </div>
+          <ul class="space-y-3 text-lg flex-1">
+            <li class="glass rounded-xl p-4 border border-flow-500/20"><b>Agent conflicts</b> — Pedagogy and Empathy fought over pace. Solved with an explicit arbitration ADR.</li>
+            <li class="glass rounded-xl p-4 border border-flow-500/20"><b>"Verifiable" is hard</b> — turning <i>"feel confident"</i> into a falsifiable rubric is the real product, not a feature.</li>
+            <li class="glass rounded-xl p-4 border border-flow-500/20"><b>Anti-Goodhart guardrails</b> — every metric we added invited a way to game it. We rewrote the token economy three times.</li>
+            <li class="glass rounded-xl p-4 border border-flow-500/20"><b>Scope discipline</b> — the spec is so rich the temptation to "just code one more thing" is constant. We shipped a click-through, not a backend, on purpose.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= SLIDE 7 — CTA / DEMO ============= -->
+<section class="slide h-full" data-name="Demo">
+  <div class="h-full w-full grid-bg rounded-3xl glass-strong relative overflow-hidden">
+    <div class="absolute -top-32 -left-24 w-[36rem] h-[36rem] rounded-full bg-flow-500/25 blur-3xl"></div>
+    <div class="absolute -bottom-32 -right-24 w-[36rem] h-[36rem] rounded-full bg-focus-500/25 blur-3xl"></div>
+    <div class="relative h-full grid grid-cols-12 gap-10 p-14 items-center">
+      <div class="col-span-7">
+        <div class="chip text-white/75 mb-6 inline-flex">06 · Now let's see it</div>
+        <h2 class="text-7xl font-black tracking-tight leading-[1.02]">
+          Enough <span class="text-white/60">talking.</span><br/>
+          <span class="bg-gradient-to-r from-flow-400 to-focus-400 bg-clip-text text-transparent">Maya's turn.</span>
+        </h2>
+        <p class="mt-6 text-2xl text-white/70 leading-relaxed max-w-2xl">
+          A 2-minute click-through. Watch a fuzzy goal become a verifiable credential — through the eyes of all five agents.
+        </p>
+        <div class="mt-10 flex items-center gap-4">
+          <a id="launchDemo" href="../demo-desktop/" class="stage-btn cta rounded-2xl px-8 py-5 text-2xl font-bold inline-flex items-center gap-3">
+            <span>▶</span> Launch the demo
+          </a>
+          <span class="text-white/45 text-base">opens demo-desktop · press <kbd>F</kbd> for fullscreen</span>
+        </div>
+        <div class="mt-12 grid grid-cols-3 gap-4 text-base max-w-2xl">
+          <div class="glass rounded-xl p-3 text-center"><div class="text-good-400 font-bold">7 scenes</div><div class="text-white/55 text-sm">~2 min</div></div>
+          <div class="glass rounded-xl p-3 text-center"><div class="text-emp-400 font-bold">5 agents</div><div class="text-white/55 text-sm">visible live</div></div>
+          <div class="glass rounded-xl p-3 text-center"><div class="text-flow-400 font-bold">1 badge</div><div class="text-white/55 text-sm">at the end</div></div>
+        </div>
+      </div>
+      <div class="col-span-5">
+        <div class="glass-strong rounded-3xl p-8">
+          <div class="text-white/55 text-sm uppercase tracking-wider mb-4">After the demo</div>
+          <ul class="space-y-3 text-lg text-white/80">
+            <li>🔧 <b>Code-gen sprint</b> — the spec is ready; AI agents can implement it.</li>
+            <li>🧪 <b>Pilot</b> — 30 learners, 4 weeks, one verifiable cohort.</li>
+            <li>🤝 <b>Open the prompts</b> — agent-prompt repo as public reference.</li>
+          </ul>
+          <div class="mt-6 pt-6 border-t border-white/10 text-base text-white/55">
+            github.com/dman1313/TeamConnect/tree/main/v2
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- BOTTOM CONTROLS -->
+<footer class="fixed bottom-0 inset-x-0 z-40 px-10 py-5 flex items-center justify-between">
+  <div class="glass rounded-full pl-1 pr-4 py-1 flex items-center gap-3 text-base">
+    <span id="slideIdx" class="w-9 h-9 rounded-full bg-white/10 grid place-items-center font-semibold">1</span>
+    <span id="slideName" class="text-white/85 font-medium">Title</span>
+    <span class="text-white/30">/</span>
+    <span class="text-white/45" id="slideTotal">7</span>
+  </div>
+  <div class="hidden md:flex items-center gap-3 text-sm text-white/45">
+    <span>← / →</span><span>navigate</span>
+    <span class="ml-2"><kbd>Space</kbd></span><span>next</span>
+    <span class="ml-2"><kbd>F</kbd></span><span>fullscreen</span>
+    <span class="ml-2"><kbd>D</kbd></span><span>jump to demo</span>
+  </div>
+  <div class="flex items-center gap-2">
+    <button id="btnPrev" class="stage-btn rounded-full px-5 py-2.5 text-base">← Back</button>
+    <button id="btnNext" class="stage-btn primary rounded-full px-6 py-2.5 text-base font-semibold">Next →</button>
+    <button id="btnFs" class="stage-btn rounded-full px-4 py-2.5 text-base" title="Fullscreen">⛶</button>
+  </div>
+</footer>
+
+<script>
+/* Inject the 5 agent cards into slide 3 (kept out of template literal for clarity) */
+(function fillSolution(){
+  const grid = document.querySelector('[data-name="Solution"] .grid.grid-cols-5');
+  if(!grid) return;
+  const A = [
+    { g:'🧭', n:'Pedagogy',  c:'focus', tagline:'Designs the path',
+      desc:'Turns a goal into a ladder of verifiable artefacts. Refuses to teach without a destination.' },
+    { g:'✅', n:'Verifier',   c:'good',  tagline:'Removes ambiguity',
+      desc:'Every success criterion must be observable, falsifiable, fair. No "feel confident".' },
+    { g:'📚', n:'Curator',    c:'emp',   tagline:'Cuts the noise',
+      desc:'Drops 14× more sources than it keeps. Tells you why each made — or didn\'t make — the cut.' },
+    { g:'💛', n:'Empathy',    c:'flow',  tagline:'Notices the struggle',
+      desc:'Detects frustration. Shrinks the task — never the person. Protects the streak on bad days.' },
+    { g:'🤝', n:'Companion',  c:'focus', tagline:'Shows up daily',
+      desc:'Energy-aware planning. 45 min/day. Refuses to schedule a 4-hour study marathon.' },
+  ];
+  grid.innerHTML = A.map(a => `
+    <div class="glass rounded-2xl p-6 border border-${a.c}-500/30 flex flex-col">
+      <div class="text-6xl mb-3">${a.g}</div>
+      <div class="text-${a.c}-400 text-sm font-bold uppercase tracking-wider">${a.tagline}</div>
+      <div class="text-3xl font-bold mt-1">${a.n}</div>
+      <p class="mt-4 text-base text-white/65 leading-snug flex-1">${a.desc}</p>
+    </div>`).join('');
+})();
+
+/* Navigation */
+const slides = document.querySelectorAll('.slide');
+let idx = 0;
+const idxEl = document.getElementById('slideIdx');
+const nameEl = document.getElementById('slideName');
+const totalEl = document.getElementById('slideTotal');
+totalEl.textContent = slides.length;
+
+function show(i){
+  idx = Math.max(0, Math.min(slides.length-1, i));
+  slides.forEach((s,k)=> s.classList.toggle('active', k===idx));
+  idxEl.textContent = idx+1;
+  nameEl.textContent = slides[idx].dataset.name;
+  document.getElementById('btnPrev').classList.toggle('opacity-40', idx===0);
+  const nb = document.getElementById('btnNext');
+  nb.textContent = idx === slides.length-1 ? 'Launch demo ▶' : 'Next →';
+  nb.classList.toggle('cta', idx === slides.length-1);
+  nb.classList.toggle('primary', idx !== slides.length-1);
+}
+function next(){
+  if(idx === slides.length-1){ window.location.href = '../demo-desktop/'; return; }
+  show(idx+1);
+}
+function prev(){ show(idx-1); }
+document.getElementById('btnNext').onclick = next;
+document.getElementById('btnPrev').onclick = prev;
+document.getElementById('btnFs').onclick = ()=>{
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+};
+window.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight' || e.key===' '){ e.preventDefault(); next(); }
+  else if(e.key==='ArrowLeft') prev();
+  else if(e.key.toLowerCase()==='f') document.getElementById('btnFs').click();
+  else if(e.key.toLowerCase()==='d') window.location.href = '../demo-desktop/';
+  else if(e.key==='Home') show(0);
+  else if(e.key==='End') show(slides.length-1);
+  else if(/^[1-7]$/.test(e.key)) show(parseInt(e.key,10)-1);
+});
+
+show(0);
+</script>
+</body>
+</html>
