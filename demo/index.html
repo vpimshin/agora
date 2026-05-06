@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>AGORA — Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<style>
+  :root {
+    --brand: 256 96% 60%;
+    --bg: 220 30% 99%;
+    --fg: 220 25% 12%;
+    --surface: 220 25% 100%;
+    --border: 220 14% 88%;
+    --empathy-bg: 187 70% 96%;
+    --flow-bg: 44 90% 96%;
+  }
+  html, body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(1000px 600px at 10% 0%, hsl(256 96% 60% / .12), transparent 60%),
+      radial-gradient(900px 600px at 90% 100%, hsl(195 80% 60% / .10), transparent 60%),
+      hsl(var(--bg));
+    color: hsl(var(--fg));
+    transition: background-color .35s ease;
+  }
+  body.empathy {
+    background:
+      radial-gradient(1200px 700px at 50% 30%, hsl(187 70% 80% / .55), transparent 60%),
+      hsl(var(--empathy-bg));
+  }
+  body.flow {
+    background:
+      radial-gradient(1200px 700px at 50% 30%, hsl(44 95% 80% / .55), transparent 60%),
+      hsl(var(--flow-bg));
+  }
+  .glass {
+    background: hsl(var(--surface) / .7);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid hsl(var(--border) / .7);
+    box-shadow: 0 4px 16px hsl(220 25% 12% / .08), 0 16px 32px hsl(220 25% 12% / .06);
+  }
+  .brand-bg { background: hsl(var(--brand)); color: white; }
+  .brand-text { color: hsl(var(--brand)); }
+  .typewriter::after {
+    content: '▍'; display:inline-block; margin-left:2px; opacity:.6;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .halo { box-shadow: 0 0 0 3px hsl(var(--border)); transition: box-shadow .4s; }
+  .halo.aligned { box-shadow: 0 0 0 3px hsl(148 60% 42%); }
+  .halo.pulse { box-shadow: 0 0 0 3px hsl(var(--brand)); animation: pulse 1.4s ease-out infinite; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 3px hsl(var(--brand) / 1); }
+    100% { box-shadow: 0 0 0 14px hsl(var(--brand) / 0); }
+  }
+  .card-swipe { transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s; }
+  .swipe-right { transform: translateX(120%) rotate(12deg); opacity: 0; }
+  .swipe-left  { transform: translateX(-120%) rotate(-12deg); opacity: 0; }
+  .badge-pop { animation: pop .5s cubic-bezier(.2,.8,.2,1); }
+  @keyframes pop { 0% { transform: scale(.7); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity:1; } }
+  .star-burst { animation: burst .9s ease-out; }
+  @keyframes burst { 0% { transform: scale(.5); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+  .stream-fade-in > * { animation: fadeIn .35s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .state-pill { transition: all .3s; }
+  .pause-bar { height: 2px; background: hsl(var(--border)); border-radius: 9999px; position: relative; overflow:hidden; }
+  .pause-bar::after { content:''; position:absolute; inset:0; width:30%; background: hsl(var(--brand)); animation: pause 1.6s ease-in-out infinite; }
+  @keyframes pause { 0%{left:-30%} 100%{left:100%} }
+  .kg-node { fill: hsl(var(--brand)); }
+  .kg-edge { stroke: hsl(var(--border)); stroke-width: 1.5; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="sticky top-0 z-40 glass px-4 py-3 flex items-center gap-3">
+  <div class="w-9 h-9 rounded-xl brand-bg grid place-items-center font-bold text-lg">A</div>
+  <div class="flex-1">
+    <div class="text-sm font-semibold leading-tight">AGORA</div>
+    <div class="text-[11px] text-zinc-500 leading-tight">Tribe · Amina's solo learning</div>
+  </div>
+  <div id="state-pill" class="state-pill text-xs font-medium px-2.5 py-1 rounded-full bg-zinc-100 text-zinc-700">S0</div>
+  <div id="token-pill" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 ring-1 ring-amber-200 flex items-center gap-1">
+    <span>⭐</span><span id="token-balance">0</span>
+  </div>
+</header>
+
+<div class="px-4 pt-3 max-w-md mx-auto">
+  <div class="glass rounded-2xl px-4 py-2 flex items-center gap-3 text-xs text-zinc-600">
+    <span class="text-base">👇</span>
+    <div id="guide-text" class="flex-1">Click <b>Try AGORA</b> to start the 90-second demo.</div>
+    <button id="reset-btn" class="text-xs text-zinc-500 hover:text-zinc-900 underline underline-offset-2">Reset</button>
+  </div>
+</div>
+
+<main id="app" class="max-w-md mx-auto p-4 pb-32"></main>
+
+<div id="award-floater" class="fixed inset-x-0 bottom-24 grid place-items-center pointer-events-none z-50"></div>
+
+<nav class="fixed bottom-0 inset-x-0 z-40 glass border-t border-zinc-200/60 px-4 py-2 grid grid-cols-5 gap-1 max-w-md mx-auto rounded-t-2xl text-[11px]">
+  <button class="flex flex-col items-center gap-0.5 py-1 brand-text font-semibold"><span>🏠</span>Today</button>
+  <button class="flex flex-col items-center gap-0.5 py-1 text-zinc-500"><span>💬</span>Coach</button>
+  <button class="flex flex-col items-center gap-0.5 py-1 text-zinc-500"><span>📚</span>Library</button>
+  <button class="flex flex-col items-center gap-0.5 py-1 text-zinc-500"><span>⭐</span>Tokens</button>
+  <button class="flex flex-col items-center gap-0.5 py-1 text-zinc-500"><span>⚙</span>Settings</button>
+</nav>
+
+<script>
+const app = document.getElementById('app');
+const guide = document.getElementById('guide-text');
+const statePill = document.getElementById('state-pill');
+const tokenBalanceEl = document.getElementById('token-balance');
+const awardFloater = document.getElementById('award-floater');
+
+let state = { scene:'splash', fsm:'S0', tokens:0 };
+
+function setState(fsm) {
+  state.fsm = fsm;
+  statePill.textContent = fsm;
+  if (fsm.startsWith('S4_E')) {
+    statePill.className = 'state-pill text-xs font-medium px-2.5 py-1 rounded-full bg-cyan-50 text-cyan-800 ring-1 ring-cyan-200 badge-pop';
+  } else if (fsm === 'S5') {
+    statePill.className = 'state-pill text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200 badge-pop';
+  } else {
+    statePill.className = 'state-pill text-xs font-medium px-2.5 py-1 rounded-full bg-zinc-100 text-zinc-700 badge-pop';
+  }
+  setTimeout(() => statePill.classList.remove('badge-pop'), 500);
+}
+function setGuide(html) { guide.innerHTML = html; }
+function setPalette({ empathy=false, flow=false } = {}) {
+  document.body.classList.toggle('empathy', empathy);
+  document.body.classList.toggle('flow', flow);
+}
+function awardTokens(n, label='Standard action') {
+  state.tokens += n;
+  tokenBalanceEl.textContent = state.tokens;
+  tokenBalanceEl.parentElement.classList.add('badge-pop');
+  setTimeout(() => tokenBalanceEl.parentElement.classList.remove('badge-pop'), 500);
+  const burst = document.createElement('div');
+  burst.className = 'glass rounded-2xl px-5 py-3 flex items-center gap-3 star-burst';
+  burst.innerHTML = `<div class="text-3xl">⭐</div><div><div class="text-sm font-bold">+${n} awarded</div><div class="text-[11px] text-zinc-500">${label}</div></div>`;
+  awardFloater.appendChild(burst);
+  setTimeout(() => burst.remove(), 900);
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- Splash ---------- */
+function renderSplash() {
+  state.scene = 'splash';
+  setGuide('Click <b>Try AGORA</b> to start the 90-second demo.');
+  app.innerHTML = `
+    <section class="glass rounded-3xl p-6 mt-6 text-center stream-fade-in">
+      <div class="text-5xl mb-2">🌱</div>
+      <h1 class="text-2xl font-bold tracking-tight">World-class coaching<br/>for everyone, everywhere.</h1>
+      <p class="text-sm text-zinc-600 mt-3">A Socratic coach, a curated library, and a tiny accountability tribe — in your pocket.</p>
+      <button id="cta" class="brand-bg mt-6 w-full rounded-2xl py-3 font-semibold shadow-lg">Try AGORA →</button>
+      <div class="mt-4 text-[11px] text-zinc-500">Hackathon demo · click-through · mock data</div>
+    </section>
+    <section class="grid grid-cols-3 gap-2 mt-4 text-center text-[11px] text-zinc-600">
+      <div class="glass rounded-xl p-3"><div class="text-xl">🧭</div>Socratic coach</div>
+      <div class="glass rounded-xl p-3"><div class="text-xl">🤝</div>Tribe of 1–4</div>
+      <div class="glass rounded-xl p-3"><div class="text-xl">💚</div>Empathy &gt; shame</div>
+    </section>`;
+  document.getElementById('cta').onclick = renderOnboarding;
+}
+
+/* ---------- Onboarding ---------- */
+function renderOnboarding() {
+  state.scene = 'onboarding';
+  setGuide('Pick <b>Solo</b> to meet your AI Companion.');
+  app.innerHTML = `
+    <section class="glass rounded-3xl p-6 mt-6 stream-fade-in">
+      <div class="text-xs uppercase tracking-wider text-zinc-500 mb-1">Step 1 of 2</div>
+      <h2 class="text-xl font-bold">Learn together — or solo?</h2>
+      <p class="text-sm text-zinc-600 mt-1">Either way, you'll have an aligned partner.</p>
+      <div class="grid grid-cols-2 gap-3 mt-5">
+        <button id="solo" class="glass rounded-2xl p-4 text-left hover:ring-2 hover:ring-violet-300 transition">
+          <div class="text-3xl">🧍</div>
+          <div class="font-semibold mt-2">Solo</div>
+          <div class="text-[11px] text-zinc-500">Plus one AI Companion</div>
+        </button>
+        <button id="tribe" class="glass rounded-2xl p-4 text-left hover:ring-2 hover:ring-violet-300 transition opacity-60">
+          <div class="text-3xl">🤝</div>
+          <div class="font-semibold mt-2">Tribe</div>
+          <div class="text-[11px] text-zinc-500">2–4 people, same goal</div>
+        </button>
+      </div>
+      <div class="mt-5 text-[11px] text-zinc-500">Your data lives inside one tribe. Never shared across tribes. <b>RLS-enforced</b>.</div>
+    </section>`;
+  document.getElementById('solo').onclick = renderCoach;
+  document.getElementById('tribe').onclick = renderCoach;
+}
+
+/* ---------- S1 Coach ---------- */
+function renderCoach() {
+  state.scene = 'coach';
+  setState('S1');
+  setGuide('Click <b>Send</b> to talk to the Coach. Watch — it never gives the answer.');
+  app.innerHTML = `
+    <section class="glass rounded-3xl p-4 mt-4 stream-fade-in">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="flex -space-x-2">
+          <div class="w-8 h-8 rounded-full bg-violet-200 grid place-items-center text-sm halo aligned" title="Amina">🙂</div>
+          <div class="w-8 h-8 rounded-full bg-zinc-200 grid place-items-center halo" id="halo-companion" title="Companion"><span class="text-[10px] font-bold">AI</span></div>
+        </div>
+        <div class="text-[11px] text-zinc-500">Amina · <span id="companion-state">Companion ready</span></div>
+      </div>
+      <div id="chat" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+      <div id="align" class="mt-4 hidden glass rounded-2xl p-3">
+        <div class="flex items-center justify-between">
+          <div class="text-xs font-semibold text-zinc-700">Alignment</div>
+          <div class="text-[11px] text-zinc-500"><span id="align-count">0</span>/2 aligned</div>
+        </div>
+        <div class="flex items-center gap-2 mt-2">
+          <span id="dot-1" class="w-2.5 h-2.5 rounded-full bg-zinc-300"></span>
+          <span id="dot-2" class="w-2.5 h-2.5 rounded-full bg-zinc-300"></span>
+          <div class="flex-1"></div>
+          <button id="align-btn" class="text-xs px-3 py-1.5 rounded-full brand-bg font-medium">I'm aligned</button>
+        </div>
+      </div>
+      <div class="mt-3 flex items-center gap-2">
+        <button class="w-9 h-9 rounded-full glass grid place-items-center" title="Voice (mock)">🎤</button>
+        <div id="composer" class="flex-1 px-3 py-2 rounded-full glass text-sm text-zinc-500 truncate">I want to learn Python.</div>
+        <button id="send" class="px-4 py-2 rounded-full brand-bg text-sm font-medium">Send →</button>
+      </div>
+    </section>
+    <div class="mt-3 text-[11px] text-zinc-500 px-2">🛡 Coach guardrail: <i>"never reveal the answer"</i> · paraphrase + breathing pause + 1 open question.</div>`;
+
+  const chat = document.getElementById('chat');
+  const sendBtn = document.getElementById('send');
+  const composer = document.getElementById('composer');
+  const align = document.getElementById('align');
+  const alignBtn = document.getElementById('align-btn');
+  const dot1 = document.getElementById('dot-1');
+  const dot2 = document.getElementById('dot-2');
+  const alignCount = document.getElementById('align-count');
+  const haloCompanion = document.getElementById('halo-companion');
+  const companionState = document.getElementById('companion-state');
+
+  const turns = [
+    { user: "I want to learn Python.",
+      coach: { paraphrase: "I'm hearing you'd like to learn Python.", question: "What would 'knowing Python' look like in your everyday life?" },
+      companion: "I'd be curious about that too — like, do you imagine writing little scripts, or building something specific?" },
+    { user: "I want to build a small calculator.",
+      coach: { paraphrase: "It sounds like a calculator you can run is the artefact you're after.", question: "What operations would make it feel done to you?" },
+      companion: "Plus, minus, times, divide — that's where I'd start." },
+    { user: "Plus, minus, times, and divide. With a CLI.",
+      coach: { paraphrase: "Got it — a CLI calculator covering the four operations.", question: "Is that the goal you'd like to commit to for the next two weeks?" },
+      companion: "I'd commit to that with you." }
+  ];
+  const drafts = [
+    "I want to build a small calculator.",
+    "Plus, minus, times, and divide. With a CLI.",
+    "Yes — let's commit to it."
+  ];
+  let turnIdx = 0;
+
+  const userMsg = (text) => {
+    const el = document.createElement('div');
+    el.className = 'flex justify-end';
+    el.innerHTML = `<div class="max-w-[85%] rounded-2xl rounded-br-md brand-bg px-3 py-2 text-sm">${text}</div>`;
+    chat.appendChild(el); chat.scrollTop = chat.scrollHeight;
+  };
+  const coachMsg = async ({ paraphrase, question }) => {
+    const el = document.createElement('div');
+    el.className = 'flex justify-start';
+    el.innerHTML = `
+      <div class="max-w-[90%] glass rounded-2xl rounded-bl-md px-3 py-2 text-sm">
+        <div class="text-[10px] uppercase tracking-wider text-violet-700 font-semibold mb-1">🧭 Coach</div>
+        <div class="para typewriter"></div>
+        <div class="my-2 pause-bar"></div>
+        <div class="ques text-zinc-700"></div>
+      </div>`;
+    chat.appendChild(el); chat.scrollTop = chat.scrollHeight;
+    const paraEl = el.querySelector('.para');
+    for (let i=0;i<paraphrase.length;i++) { paraEl.textContent = paraphrase.slice(0,i+1); await sleep(14); }
+    paraEl.classList.remove('typewriter');
+    await sleep(900);
+    const qEl = el.querySelector('.ques'); qEl.classList.add('typewriter');
+    for (let i=0;i<question.length;i++) { qEl.textContent = question.slice(0,i+1); await sleep(14); }
+    qEl.classList.remove('typewriter');
+    chat.scrollTop = chat.scrollHeight;
+  };
+  const companionMsg = async (text) => {
+    haloCompanion.classList.add('pulse');
+    companionState.textContent = 'Companion is typing…';
+    await sleep(500);
+    const el = document.createElement('div');
+    el.className = 'flex justify-start';
+    el.innerHTML = `
+      <div class="max-w-[90%] rounded-2xl rounded-bl-md bg-zinc-100 px-3 py-2 text-sm">
+        <div class="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold mb-1 flex items-center gap-1">
+          <span class="px-1 rounded bg-zinc-900 text-white text-[9px]">AI</span> Companion
+        </div>
+        <div class="text-zinc-700">${text}</div>
+      </div>`;
+    chat.appendChild(el); chat.scrollTop = chat.scrollHeight;
+    haloCompanion.classList.remove('pulse');
+    companionState.textContent = 'Companion ready';
+  };
+
+  const advance = async () => {
+    sendBtn.disabled = true;
+    const t = turns[turnIdx];
+    userMsg(t.user);
+    composer.textContent = drafts[turnIdx] || '';
+    await coachMsg(t.coach);
+    await companionMsg(t.companion);
+    turnIdx++;
+    if (turnIdx < turns.length) {
+      sendBtn.disabled = false;
+      setGuide(`Turn ${turnIdx+1} of 3 — click <b>Send</b>.`);
+    } else {
+      align.classList.remove('hidden');
+      sendBtn.disabled = true;
+      composer.textContent = 'Goal looks aligned. Confirm below ↓';
+      setGuide("Click <b>I'm aligned</b> — Companion will follow.");
+    }
+  };
+  sendBtn.onclick = advance;
+
+  alignBtn.onclick = async () => {
+    dot1.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+    alignCount.textContent = '1';
+    alignBtn.disabled = true;
+    alignBtn.textContent = 'Waiting…';
+    await sleep(800);
+    dot2.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+    alignCount.textContent = '2';
+    await sleep(500);
+    setState('S2');
+    setGuide("Goal aligned. Define <b>what 'done' looks like</b>.");
+    setTimeout(renderCriteria, 700);
+  };
+}
+
+/* ---------- S2 Criteria ---------- */
+function renderCriteria() {
+  state.scene = 'criteria';
+  setState('S2');
+  app.innerHTML = `
+    <section class="glass rounded-3xl p-5 mt-4 stream-fade-in">
+      <div class="text-xs uppercase tracking-wider text-zinc-500 mb-1">Define done</div>
+      <h2 class="text-lg font-bold">How will you know you've learned Python?</h2>
+      <div class="mt-4 space-y-3">
+        <button id="draft1" class="w-full text-left glass rounded-2xl p-3 hover:ring-2 hover:ring-violet-300 transition">
+          <div class="text-sm font-medium">"I will be <i>good</i> at Python."</div>
+          <div class="text-[11px] text-zinc-500 mt-1">Try this first draft</div>
+        </button>
+      </div>
+      <div id="verifier" class="mt-3 hidden"></div>
+      <div id="committed" class="mt-3 hidden"></div>
+      <div id="next-row" class="mt-5 hidden">
+        <button id="to-resources" class="brand-bg w-full rounded-2xl py-3 font-semibold">Continue → Resources</button>
+      </div>
+    </section>
+    <div class="mt-3 text-[11px] text-zinc-500 px-2">🛡 Verifier guardrail: every criterion must be <b>binary, observable, measurable</b>.</div>`;
+  setGuide('Click the draft criterion. The Verifier will react.');
+
+  document.getElementById('draft1').onclick = () => {
+    const verifier = document.getElementById('verifier');
+    verifier.classList.remove('hidden');
+    verifier.innerHTML = `
+      <div class="rounded-2xl p-3 bg-amber-50 ring-1 ring-amber-200 text-sm">
+        <div class="flex items-center gap-2 mb-1"><span class="text-base">⚠️</span><span class="font-semibold text-amber-900">Verifier flagged this as <i>subjective</i>.</span></div>
+        <div class="text-amber-900/80 text-[13px]">"Good at" depends on opinion and has no observable test.</div>
+        <div class="mt-3 text-[11px] uppercase tracking-wider text-amber-900/70">Suggested rewrite</div>
+        <button id="accept" class="mt-1 w-full text-left rounded-xl bg-white ring-1 ring-amber-300 p-3 hover:ring-2 hover:ring-violet-400 transition">
+          <div class="text-sm font-medium">"I can write a CLI that handles +, −, ×, ÷ and prints results."</div>
+          <div class="text-[11px] text-emerald-700 mt-1">✓ binary · verification: artefact</div>
+        </button>
+      </div>`;
+    setGuide('Click the suggested rewrite to accept it.');
+
+    document.getElementById('accept').onclick = () => {
+      verifier.classList.add('hidden');
+      const committed = document.getElementById('committed');
+      committed.classList.remove('hidden');
+      committed.innerHTML = `
+        <div class="rounded-2xl p-3 bg-emerald-50 ring-1 ring-emerald-200 text-sm flex items-start gap-2">
+          <span class="text-base">✅</span>
+          <div>
+            <div class="font-medium text-emerald-900">"I can write a CLI that handles +, −, ×, ÷ and prints results."</div>
+            <div class="text-[11px] text-emerald-800/80 mt-1">Committed · binary · verifiable by artefact</div>
+          </div>
+        </div>`;
+      document.getElementById('next-row').classList.remove('hidden');
+      document.getElementById('to-resources').onclick = renderResources;
+      setGuide('Click <b>Continue → Resources</b>.');
+    };
+  };
+}
+
+/* ---------- S3 Resources ---------- */
+function renderResources() {
+  state.scene = 'resources';
+  setState('S3');
+  setGuide('Click <b>Add to library</b> — the Curator builds the knowledge graph.');
+  app.innerHTML = `
+    <section class="glass rounded-3xl p-5 mt-4 stream-fade-in">
+      <div class="text-xs uppercase tracking-wider text-zinc-500 mb-1">Resources</div>
+      <h2 class="text-lg font-bold">Curated for your goal</h2>
+      <div class="mt-3 space-y-2">
+        <div class="glass rounded-2xl p-3 flex items-center gap-3"><div class="text-2xl">📘</div><div class="flex-1"><div class="text-sm font-medium">Python REPL Basics</div><div class="text-[11px] text-zinc-500">CC-BY · 12 min · open commons</div></div><span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">free</span></div>
+        <div class="glass rounded-2xl p-3 flex items-center gap-3"><div class="text-2xl">📗</div><div class="flex-1"><div class="text-sm font-medium">Arithmetic in Python</div><div class="text-[11px] text-zinc-500">CC-BY-SA · 8 min · open commons</div></div><span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">free</span></div>
+        <div class="glass rounded-2xl p-3 flex items-center gap-3"><div class="text-2xl">📙</div><div class="flex-1"><div class="text-sm font-medium">CLI Argparse Patterns</div><div class="text-[11px] text-zinc-500">MIT · 10 min · open commons</div></div><span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">free</span></div>
+      </div>
+      <div id="kg-wrap" class="mt-4 hidden">
+        <div class="text-xs text-zinc-500 mb-1 uppercase tracking-wider">Knowledge graph (per-tribe)</div>
+        <div class="glass rounded-2xl p-2">
+          <svg viewBox="0 0 320 140" class="w-full h-32">
+            <line x1="60"  y1="70"  x2="160" y2="40"  class="kg-edge"/>
+            <line x1="160" y1="40"  x2="260" y2="70"  class="kg-edge"/>
+            <line x1="60"  y1="70"  x2="160" y2="100" class="kg-edge"/>
+            <line x1="160" y1="100" x2="260" y2="70"  class="kg-edge"/>
+            <line x1="160" y1="40"  x2="160" y2="100" class="kg-edge"/>
+            <circle cx="60"  cy="70"  r="14" class="kg-node"/>
+            <circle cx="160" cy="40"  r="11" class="kg-node" opacity=".85"/>
+            <circle cx="160" cy="100" r="11" class="kg-node" opacity=".85"/>
+            <circle cx="260" cy="70"  r="14" class="kg-node"/>
+            <text x="60"  y="110" text-anchor="middle" font-size="10" fill="#374151">REPL</text>
+            <text x="160" y="22"  text-anchor="middle" font-size="10" fill="#374151">Operators</text>
+            <text x="160" y="125" text-anchor="middle" font-size="10" fill="#374151">argparse</text>
+            <text x="260" y="110" text-anchor="middle" font-size="10" fill="#374151">CLI</text>
+          </svg>
+        </div>
+        <div class="text-[11px] text-zinc-500 mt-1">Vectors + AGE graph isolated to your tribe (RLS).</div>
+      </div>
+      <button id="add-lib" class="brand-bg mt-4 w-full rounded-2xl py-3 font-semibold">Add to library</button>
+      <button id="to-today" class="hidden mt-2 w-full rounded-2xl py-3 font-semibold ring-1 ring-zinc-300 hover:bg-zinc-50">Continue → Today</button>
+    </section>`;
+  document.getElementById('add-lib').onclick = () => {
+    document.getElementById('add-lib').classList.add('hidden');
+    document.getElementById('kg-wrap').classList.remove('hidden');
+    document.getElementById('to-today').classList.remove('hidden');
+    setGuide('Click <b>Continue → Today</b> for your first action.');
+  };
+  document.getElementById('to-today').onclick = renderToday;
+}
+
+/* ---------- S4 Today ---------- */
+function renderToday() {
+  state.scene = 'today';
+  setState('S4');
+  setPalette();
+  setGuide('Click <b>✓ Accept</b> on action #1.');
+
+  const cards = [
+    { title: 'Read: Python REPL Basics', meta: '⏱ 12 min · 🌶 2/5 · 📚 CC-BY', kind: 'standard', reward: 10, label: 'Standard action', cite: 'Python REPL Basics' },
+    { title: 'Write: solve 5 arithmetic exercises', meta: '⏱ 18 min · 🌶 4/5 · 📚 Arithmetic in Python', kind: 'standard', reward: 10, label: 'Standard action', cite: 'Arithmetic in Python' }
+  ];
+
+  app.innerHTML = `
+    <section class="mt-4 stream-fade-in">
+      <div class="flex items-center justify-between px-1 mb-2">
+        <h2 class="text-lg font-bold">Today, Tuesday</h2>
+        <div id="card-counter" class="text-xs text-zinc-500">Card 1 of 2</div>
+      </div>
+      <div id="deck" class="relative h-64"></div>
+      <div class="mt-2 grid grid-cols-3 gap-2">
+        <button id="struggle" class="rounded-2xl py-3 ring-1 ring-zinc-300 text-sm font-medium hover:bg-zinc-50">😔 Struggle</button>
+        <button id="defer"    class="rounded-2xl py-3 ring-1 ring-zinc-300 text-sm font-medium hover:bg-zinc-50">↩ Defer</button>
+        <button id="accept"   class="rounded-2xl py-3 brand-bg text-sm font-semibold">✓ Accept</button>
+      </div>
+      <div class="mt-3 text-[11px] text-zinc-500 px-1">🛡 Empathy guardrail: struggle pays <b>+15⭐</b> (recovery), more than standard <b>+10⭐</b>.</div>
+    </section>`;
+
+  let idx = 0;
+  const deck = document.getElementById('deck');
+  const counter = document.getElementById('card-counter');
+
+  function renderCard(card, recovery=false) {
+    deck.innerHTML = '';
+    const el = document.createElement('div');
+    el.className = `card-swipe absolute inset-0 glass rounded-3xl p-5 ${recovery ? 'ring-2 ring-cyan-300' : ''}`;
+    el.innerHTML = `
+      ${recovery ? `<div class="text-[10px] uppercase tracking-widest text-cyan-700 font-bold mb-1">💚 Recovery action</div>` : `<div class="text-[10px] uppercase tracking-widest text-violet-700 font-bold mb-1">Today's action</div>`}
+      <div class="text-base font-bold leading-tight">${card.title}</div>
+      <div class="text-[12px] text-zinc-500 mt-1">${card.meta}</div>
+      <div class="mt-4 text-sm text-zinc-700">
+        ${recovery ? `Take it gently. Skim, don't sprint. When you tap <b>✓ Accept</b>, you'll earn <b>+15⭐</b>.` : `Read the chunk above. When you tap <b>✓ Accept</b>, you'll earn <b>+${card.reward}⭐</b>.`}
+      </div>
+      <div class="mt-4 text-[11px] text-zinc-500">Citation: ${card.cite}</div>
+    `;
+    deck.appendChild(el);
+  }
+
+  function showCard() {
+    if (idx >= cards.length) { renderAchieved(); return; }
+    counter.textContent = `Card ${idx+1} of ${cards.length}`;
+    renderCard(cards[idx], cards[idx].kind === 'recovery');
+  }
+
+  async function accept() {
+    const card = deck.firstChild; if (!card) return;
+    card.classList.add('swipe-right');
+    await sleep(350);
+    awardTokens(cards[idx].reward, cards[idx].label);
+    if (cards[idx].kind === 'recovery') {
+      setPalette();
+      setState('S4');
+    }
+    if (idx === 0 && cards[idx].kind === 'standard') {
+      setPalette({ flow: true });
+      setTimeout(() => { if (state.scene==='today') setPalette(); }, 1500);
+      setGuide('Now click <b>😔 Struggle</b> on action #2 — see what happens.');
+    }
+    idx++;
+    setTimeout(showCard, 250);
+  }
+  async function struggle() {
+    const card = deck.firstChild; if (!card) return;
+    card.classList.add('swipe-left');
+    await sleep(350);
+    triggerEmpathy();
+  }
+  async function defer() {
+    const card = deck.firstChild; if (!card) return;
+    card.style.transform = 'translateY(-120%) rotate(-2deg)';
+    card.style.opacity = '0';
+    await sleep(350);
+    showCard();
+  }
+
+  function triggerEmpathy() {
+    setState('S4_E');
+    setPalette({ empathy: true });
+    const banner = document.createElement('div');
+    banner.className = 'glass rounded-2xl p-3 mt-3 ring-1 ring-cyan-300 stream-fade-in';
+    banner.innerHTML = `
+      <div class="flex items-start gap-2">
+        <div class="text-xl">💚</div>
+        <div class="text-sm text-cyan-900">
+          <div class="font-semibold">That step is dense — that's information, not failure.</div>
+          <div class="text-[12px] mt-1 text-cyan-900/80">Try a softer angle for 5 minutes. You'll come back stronger.</div>
+        </div>
+      </div>`;
+    app.querySelector('section').appendChild(banner);
+    setGuide('Empathy engaged. Click <b>✓ Accept</b> to take the recovery action.');
+    cards[idx] = { title: 'Skim: 1-page primer on Python operators', meta: '⏱ 5 min · 🌶 1/5 · 📚 Operators 1-pager', kind: 'recovery', reward: 15, label: 'Recovery action (+15⭐)', cite: 'Operators 1-pager' };
+    renderCard(cards[idx], true);
+  }
+
+  document.getElementById('accept').onclick = accept;
+  document.getElementById('struggle').onclick = struggle;
+  document.getElementById('defer').onclick = defer;
+  showCard();
+}
+
+/* ---------- S5 Achieved ---------- */
+function renderAchieved() {
+  state.scene = 'achieved';
+  setState('S5');
+  setPalette({ flow: true });
+  setGuide('🎉 Demo complete. Click <b>Reset</b> or <b>Replay</b>.');
+  app.innerHTML = `
+    <section class="glass rounded-3xl p-6 mt-6 text-center stream-fade-in">
+      <div class="text-6xl badge-pop">🏅</div>
+      <h2 class="text-xl font-bold mt-2">Goal achieved</h2>
+      <p class="text-sm text-zinc-600 mt-1">"I can write a CLI that handles +, −, ×, ÷ and prints results."</p>
+      <div class="mt-5 grid grid-cols-3 gap-2 text-center">
+        <div class="glass rounded-xl p-3"><div class="text-xs text-zinc-500">Tokens</div><div class="text-lg font-bold">⭐ ${state.tokens}</div></div>
+        <div class="glass rounded-xl p-3"><div class="text-xs text-zinc-500">Recoveries</div><div class="text-lg font-bold">1</div></div>
+        <div class="glass rounded-xl p-3"><div class="text-xs text-zinc-500">Actions</div><div class="text-lg font-bold">2 / 2</div></div>
+      </div>
+      <div class="mt-5 glass rounded-2xl p-3 text-left">
+        <div class="text-[11px] uppercase tracking-wider text-zinc-500 mb-1">Verifiable Credential</div>
+        <div class="text-sm font-medium">Open Badge 3.0 · "CLI Calculator in Python"</div>
+        <div class="text-[11px] text-zinc-500 mt-1">Issued by AGORA · signed · downloadable · yours forever</div>
+        <div class="mt-2 flex gap-2">
+          <button class="text-xs px-3 py-1.5 rounded-full ring-1 ring-zinc-300 hover:bg-zinc-50">Download</button>
+          <button class="text-xs px-3 py-1.5 rounded-full ring-1 ring-zinc-300 hover:bg-zinc-50">Share to LinkedIn</button>
+        </div>
+      </div>
+      <button id="replay" class="mt-6 w-full brand-bg rounded-2xl py-3 font-semibold">Replay demo</button>
+    </section>
+    <section class="mt-4 grid grid-cols-2 gap-2 text-[11px] text-zinc-600">
+      <div class="glass rounded-xl p-3"><b>RLS</b> on every read/write</div>
+      <div class="glass rounded-xl p-3"><b>PII redacted</b> before LLM</div>
+      <div class="glass rounded-xl p-3"><b>WCAG 2.2 AA</b> targets</div>
+      <div class="glass rounded-xl p-3"><b>Mock-mode</b> for demos</div>
+    </section>`;
+  document.getElementById('replay').onclick = reset;
+}
+
+function reset() {
+  state = { scene:'splash', fsm:'S0', tokens:0 };
+  tokenBalanceEl.textContent = 0;
+  setPalette();
+  setState('S0');
+  renderSplash();
+}
+document.getElementById('reset-btn').onclick = reset;
+
+renderSplash();
+</script>
+</body>
+</html>
