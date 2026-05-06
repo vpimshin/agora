@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<title>AGORA — Hackathon Stage Demo</title>
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
+      colors: {
+        ink:   { 950:'#05060a', 900:'#0a0d18', 800:'#10141f', 700:'#1a2030', 600:'#262e44' },
+        flow:  { 400:'#fbbf24', 500:'#f59e0b' },
+        emp:   { 400:'#22d3ee', 500:'#06b6d4' },
+        focus: { 400:'#a78bfa', 500:'#8b5cf6' },
+        good:  { 400:'#34d399', 500:'#10b981' },
+      }
+    }
+  }
+};
+</script>
+<style>
+  html,body{height:100%;}
+  body{
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    background: radial-gradient(1200px 700px at 75% -10%, rgba(139,92,246,.18), transparent 60%),
+                radial-gradient(900px 600px at 10% 110%, rgba(34,211,238,.12), transparent 60%),
+                #05060a;
+    color: #e6e9f2;
+    overflow: hidden;
+    letter-spacing: -0.01em;
+  }
+  body.empathy{
+    background: radial-gradient(1200px 700px at 75% -10%, rgba(34,211,238,.28), transparent 60%),
+                radial-gradient(900px 600px at 10% 110%, rgba(167,139,250,.12), transparent 60%),
+                #04090d;
+  }
+  body.flow{
+    background: radial-gradient(1200px 700px at 75% -10%, rgba(245,158,11,.22), transparent 60%),
+                radial-gradient(900px 600px at 10% 110%, rgba(167,139,250,.12), transparent 60%),
+                #08080a;
+  }
+  .glass{
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+    border: 1px solid rgba(255,255,255,.07);
+    backdrop-filter: blur(8px);
+  }
+  .glass-strong{
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(12px);
+  }
+  .grid-bg{
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+  .scene-enter{ animation: sceneIn .55s ease both; }
+  @keyframes sceneIn{ from{opacity:0; transform: translateY(10px); filter: blur(4px);} to{opacity:1; transform:none; filter:none;} }
+  .pulse-dot::before{
+    content:''; position:absolute; inset:-4px; border-radius:9999px;
+    border:1px solid currentColor; animation: ping 1.6s ease-out infinite;
+  }
+  @keyframes ping{ 0%{opacity:.7; transform:scale(.8);} 100%{opacity:0; transform:scale(1.8);} }
+  .ring-glow{ box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 24px 60px -20px rgba(139,92,246,.45); }
+  .badge-glow{ box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 18px 60px -10px rgba(245,158,11,.55); }
+  .kg-edge{ stroke-dasharray: 6 6; animation: dash 12s linear infinite; }
+  @keyframes dash{ to{ stroke-dashoffset: -240; } }
+  .marquee{ animation: marq 40s linear infinite; }
+  @keyframes marq{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .stage-btn{
+    background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10);
+    transition: all .15s ease;
+  }
+  .stage-btn:hover{ background: rgba(255,255,255,.12); transform: translateY(-1px); }
+  .stage-btn.primary{
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    border-color: rgba(255,255,255,.14);
+    box-shadow: 0 14px 40px -10px rgba(139,92,246,.7);
+  }
+  .stage-btn.primary:hover{ filter: brightness(1.08); }
+  .chip{
+    padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight:600; letter-spacing:.04em;
+    text-transform: uppercase; border:1px solid rgba(255,255,255,.10);
+  }
+  .agent-active{ animation: agentGlow 1.6s ease-in-out infinite; }
+  @keyframes agentGlow{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(167,139,250,.0);}
+    50%{ box-shadow: 0 0 0 6px rgba(167,139,250,.25);}
+  }
+  .progress{ height:6px; background: rgba(255,255,255,.08); border-radius:9999px; overflow:hidden; }
+  .progress > div{ height:100%; background: linear-gradient(90deg, #a78bfa, #22d3ee); transition: width .8s cubic-bezier(.2,.7,.2,1); }
+  .token-pop{ animation: pop .8s cubic-bezier(.2,.7,.2,1); }
+  @keyframes pop{ 0%{transform:scale(.6); opacity:0;} 60%{transform:scale(1.15); opacity:1;} 100%{transform:scale(1); opacity:1;} }
+  .breath{ animation: breath 4s ease-in-out infinite; }
+  @keyframes breath{ 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.06);} }
+  .nice-scroll::-webkit-scrollbar{ width:6px; height:6px;}
+  .nice-scroll::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.15); border-radius:9999px;}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{ animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body class="min-h-screen w-screen">
+
+<header class="fixed top-0 inset-x-0 z-40 px-8 py-4 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-focus-500 to-emp-500 grid place-items-center text-white font-black">A</div>
+    <div>
+      <div class="text-sm font-semibold tracking-wide">AGORA</div>
+      <div class="text-[11px] text-white/50 -mt-0.5">Agentic Goal-Oriented Reflective Adaptive academy</div>
+    </div>
+  </div>
+  <div id="agentBar" class="flex items-center gap-2"></div>
+  <div class="flex items-center gap-3">
+    <div class="glass rounded-full px-3 py-1.5 text-xs flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-good-400"></span>
+      <span class="text-white/70">Live · v2.0 · hackathon build</span>
+    </div>
+    <div id="tokenChip" class="glass rounded-full px-3 py-1.5 text-xs flex items-center gap-2">
+      <span>⭐</span><span class="font-semibold tabular-nums" id="tokenCount">0</span>
+      <span class="text-white/50">tokens</span>
+    </div>
+  </div>
+</header>
+
+<main id="stage" class="absolute inset-0 pt-20 pb-20 px-10"></main>
+
+<footer class="fixed bottom-0 inset-x-0 z-40 px-8 py-4 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="glass rounded-full pl-1 pr-3 py-1 flex items-center gap-2 text-xs">
+      <span id="sceneIdx" class="w-7 h-7 rounded-full bg-white/10 grid place-items-center font-semibold">1</span>
+      <span id="sceneName" class="text-white/80 font-medium">Cold open</span>
+      <span class="text-white/30">/</span>
+      <span class="text-white/40">7</span>
+    </div>
+    <div class="hidden md:flex items-center gap-2 text-[11px] text-white/40">
+      <span>← / →</span><span>navigate</span>
+      <span class="ml-2">Space</span><span>next</span>
+      <span class="ml-2">F</span><span>fullscreen</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-2">
+    <button id="btnPrev" class="stage-btn rounded-full px-4 py-2 text-sm">← Back</button>
+    <button id="btnNext" class="stage-btn primary rounded-full px-5 py-2 text-sm font-semibold">Next →</button>
+    <button id="btnRestart" class="stage-btn rounded-full px-3 py-2 text-sm" title="Restart">↻</button>
+    <button id="btnFs" class="stage-btn rounded-full px-3 py-2 text-sm" title="Fullscreen">⛶</button>
+  </div>
+</footer>
+
+<script>
+const AGENTS = [
+  { id:'pedagogy',  name:'Pedagogy',  glyph:'🧭', color:'focus',  desc:'Designs the learning path' },
+  { id:'verifier',  name:'Verifier',  glyph:'✅', color:'good',   desc:'Makes outcomes objective' },
+  { id:'curator',   name:'Curator',   glyph:'📚', color:'emp',    desc:'Selects best resources' },
+  { id:'empathy',   name:'Empathy',   glyph:'💛', color:'flow',   desc:'Notices struggle, adapts tone' },
+  { id:'companion', name:'Companion', glyph:'🤝', color:'focus',  desc:'Daily nudges, accountability' },
+];
+
+let state = { scene:0, tokens:0, active:new Set(), palette:'default' };
+const stageEl = document.getElementById('stage');
+
+function setPalette(p){
+  state.palette = p;
+  document.body.classList.remove('empathy','flow');
+  if(p==='empathy') document.body.classList.add('empathy');
+  if(p==='flow') document.body.classList.add('flow');
+}
+function setActive(ids){ state.active = new Set(ids); renderAgentBar(); }
+function renderAgentBar(){
+  const bar = document.getElementById('agentBar');
+  bar.innerHTML = AGENTS.map(a => {
+    const active = state.active.has(a.id);
+    return `<div class="glass rounded-full px-2.5 py-1 text-[11px] flex items-center gap-1.5 ${active?'agent-active':''}" title="${a.desc}">
+      <span class="text-base leading-none">${a.glyph}</span>
+      <span class="${active?'text-white':'text-white/45'} font-medium">${a.name}</span>
+      ${active?'<span class="w-1.5 h-1.5 rounded-full bg-focus-400"></span>':''}
+    </div>`;
+  }).join('');
+}
+function awardTokens(n){
+  const start = state.tokens; state.tokens += n;
+  const el = document.getElementById('tokenCount');
+  const t0 = performance.now(); const dur = 700;
+  function step(t){
+    const k = Math.min(1,(t-t0)/dur);
+    el.textContent = Math.round(start + (state.tokens-start)*k);
+    if(k<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+  const chip = document.getElementById('tokenChip');
+  chip.classList.remove('token-pop'); void chip.offsetWidth; chip.classList.add('token-pop');
+}
+
+const SCENES = [
+  { name:'Cold open',           render: renderS0 },
+  { name:'Goal · Maya speaks',  render: renderS1 },
+  { name:'Multi-agent council', render: renderS2 },
+  { name:'Knowledge graph',     render: renderS3 },
+  { name:'Today · the plan',    render: renderS4 },
+  { name:'Empathy loop',        render: renderS5 },
+  { name:'Verifiable credential', render: renderS6 },
+];
+
+function renderScene(){
+  const s = SCENES[state.scene];
+  document.getElementById('sceneIdx').textContent = state.scene+1;
+  document.getElementById('sceneName').textContent = s.name;
+  stageEl.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'h-full scene-enter';
+  stageEl.appendChild(wrap);
+  s.render(wrap);
+  const prevBtn = document.getElementById('btnPrev');
+  prevBtn.disabled = state.scene===0;
+  prevBtn.classList.toggle('opacity-40', state.scene===0);
+  document.getElementById('btnNext').textContent = state.scene===SCENES.length-1 ? 'Restart ↻' : 'Next →';
+}
+
+/* S0 */
+function renderS0(root){
+  setActive([]); setPalette('default');
+  root.innerHTML = `
+    <div class="h-full grid-bg rounded-3xl glass-strong relative overflow-hidden">
+      <div class="absolute -top-24 -left-24 w-[28rem] h-[28rem] rounded-full bg-focus-500/20 blur-3xl"></div>
+      <div class="absolute -bottom-32 -right-24 w-[34rem] h-[34rem] rounded-full bg-emp-500/20 blur-3xl"></div>
+      <div class="relative h-full grid grid-cols-12 gap-8 p-12">
+        <div class="col-span-7 flex flex-col justify-center">
+          <div class="chip text-white/70 mb-6 inline-flex w-fit">Hackathon · 2026 · live demo</div>
+          <h1 class="text-7xl font-black leading-[1.02] tracking-tight">
+            Learning, with<br/>
+            <span class="bg-gradient-to-r from-focus-400 via-emp-400 to-flow-400 bg-clip-text text-transparent">five agents</span>
+            on your side.
+          </h1>
+          <p class="mt-6 text-xl text-white/65 max-w-2xl leading-relaxed">
+            AGORA turns a fuzzy goal into a verifiable journey.
+            Pedagogy plans, Verifier removes ambiguity, Curator finds the signal,
+            Empathy notices the struggle, Companion shows up daily.
+          </p>
+          <div class="mt-10 flex items-center gap-3 text-sm">
+            <div class="glass rounded-full px-3 py-1.5">No black-box answers</div>
+            <div class="glass rounded-full px-3 py-1.5">Open Badges 3.0</div>
+            <div class="glass rounded-full px-3 py-1.5">Private-by-default</div>
+          </div>
+          <div class="mt-12 text-white/40 text-sm">Press <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white/80">Space</kbd> to begin Maya's story →</div>
+        </div>
+        <div class="col-span-5 relative">
+          <div class="absolute inset-0 grid place-items-center">
+            <div class="relative w-[28rem] h-[28rem]">
+              <div class="absolute inset-0 rounded-full border border-white/10"></div>
+              <div class="absolute inset-8 rounded-full border border-white/10"></div>
+              <div class="absolute inset-16 rounded-full border border-white/10"></div>
+              ${AGENTS.map((a,i)=>{
+                const angle = (i/AGENTS.length)*Math.PI*2 - Math.PI/2;
+                const r=170; const x=Math.cos(angle)*r+224-36; const y=Math.sin(angle)*r+224-36;
+                return `<div class="absolute rounded-2xl glass-strong grid place-items-center text-3xl breath" style="left:${x}px; top:${y}px; width:72px; height:72px; animation-delay:${i*0.4}s">${a.glyph}</div>`;
+              }).join('')}
+              <div class="absolute inset-0 grid place-items-center">
+                <div class="w-28 h-28 rounded-3xl bg-gradient-to-br from-focus-500 to-emp-500 grid place-items-center text-5xl ring-glow">🎓</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="absolute bottom-0 inset-x-0 overflow-hidden border-t border-white/5 bg-black/30">
+        <div class="marquee whitespace-nowrap py-2.5 text-xs text-white/45 flex gap-10">
+          ${Array(2).fill(0).map(()=>`
+            <span>● Spec-Driven Design</span><span>● Empathy Loop</span>
+            <span>● Verifiable Credentials</span><span>● Living Knowledge Graph</span>
+            <span>● Agent Guardrails</span><span>● Token Economy</span>
+            <span>● Built for hackathons, designed for scale</span>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+/* S1 */
+function renderS1(root){
+  setActive(['pedagogy','companion']); setPalette('default');
+  root.innerHTML = `
+    <div class="h-full grid grid-cols-12 gap-6">
+      <aside class="col-span-3 glass-strong rounded-3xl p-6 flex flex-col">
+        <div class="flex items-center gap-3">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-flow-400 to-flow-500 grid place-items-center text-2xl">👩🏽‍💻</div>
+          <div>
+            <div class="text-lg font-semibold">Maya Chen</div>
+            <div class="text-xs text-white/50">Junior SWE · 2 yrs · Berlin</div>
+          </div>
+        </div>
+        <div class="mt-6 space-y-3 text-sm">
+          <div class="text-white/50 text-xs uppercase tracking-wider">Context</div>
+          <div class="glass rounded-xl p-3 text-white/80">Promoted to mid-level review track. Blocker: <b class="text-white">system design</b>.</div>
+          <div class="glass rounded-xl p-3 text-white/80">Tried 3 courses. Watched. Forgot. Bored.</div>
+          <div class="glass rounded-xl p-3 text-white/80">Has 45 min/day. Hates fluff.</div>
+        </div>
+        <div class="mt-auto pt-6">
+          <div class="text-white/50 text-xs uppercase tracking-wider mb-2">Today's intent</div>
+          <div class="text-2xl font-semibold leading-tight">"Help me actually <span class="text-flow-400">get</span> system design — not just watch it."</div>
+        </div>
+      </aside>
+      <section class="col-span-6 glass-strong rounded-3xl p-8 relative">
+        <div class="chip text-white/70 mb-4 inline-flex">Scene 1 · Goal capture</div>
+        <h2 class="text-4xl font-bold tracking-tight">What do you want to be able to do?</h2>
+        <p class="text-white/55 mt-2">Write it the way you'd say it to a friend. We'll handle the structure.</p>
+        <div class="mt-8 glass rounded-2xl p-5 ring-1 ring-focus-500/30">
+          <div class="text-[11px] uppercase tracking-wider text-focus-400 mb-2">Maya types</div>
+          <div id="mayaInput" class="text-2xl font-medium leading-snug min-h-[6rem]"></div>
+          <div class="mt-3 flex items-center gap-3 text-xs text-white/50">
+            <span class="w-2 h-2 rounded-full bg-good-400"></span>
+            <span>auto-saving · private · never used to train</span>
+          </div>
+        </div>
+        <div id="pedagogyEcho" class="mt-5 hidden">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-focus-500/20 grid place-items-center text-lg">🧭</div>
+            <div class="flex-1 glass rounded-2xl p-4">
+              <div class="text-[11px] uppercase tracking-wider text-focus-400 mb-1">Pedagogy paraphrases</div>
+              <div class="text-lg leading-relaxed">So — by Friday three weeks from now, you want to <b>walk a senior through your own design of a URL shortener</b> at the whiteboard, defending trade-offs.<br/><span class="text-white/55 text-base">Did I get that right?</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <aside class="col-span-3 glass-strong rounded-3xl p-6 flex flex-col">
+        <div class="text-white/60 text-xs uppercase tracking-wider mb-3">Live agent thoughts</div>
+        <div id="thoughts" class="space-y-3 text-sm flex-1 overflow-auto nice-scroll"></div>
+        <div class="mt-4 pt-4 border-t border-white/5 text-[11px] text-white/40">
+          Every reasoning step is auditable. Press <kbd class="px-1 rounded bg-white/10">⌃R</kbd> for the full trace.
+        </div>
+      </aside>
+    </div>`;
+  const t = "I want to feel confident in system design interviews. Not memorize — actually understand the trade-offs.";
+  const target = document.getElementById('mayaInput');
+  let i=0;
+  const iv = setInterval(()=>{
+    target.textContent = t.slice(0, ++i) + (i<t.length?'▍':'');
+    if(i>=t.length){
+      clearInterval(iv); target.textContent = t;
+      setTimeout(()=> document.getElementById('pedagogyEcho').classList.remove('hidden'), 350);
+      pushThoughts();
+    }
+  }, 28);
+  function pushThoughts(){
+    const lines = [
+      { who:'Companion', glyph:'🤝', color:'focus', txt:'Calendar reads: 45 min daily, mornings. Energy peak 09:30.' },
+      { who:'Pedagogy',  glyph:'🧭', color:'focus', txt:'Goal is fuzzy. Need a verifiable artefact + a deadline.' },
+      { who:'Verifier',  glyph:'✅', color:'good',  txt:'"Confident" is subjective. Proposing: design walkthrough, peer-graded rubric.' },
+      { who:'Pedagogy',  glyph:'🧭', color:'focus', txt:'3-week ladder: caching → sharding → consistency. Start with URL shortener (high signal, low scope).' },
+      { who:'Curator',   glyph:'📚', color:'emp',   txt:'2 papers, 1 video, 1 live system. Dropping 14 results that just rephrase the same idea.' },
+    ];
+    const list = document.getElementById('thoughts');
+    lines.forEach((l,k)=>{
+      setTimeout(()=>{
+        const node = document.createElement('div');
+        node.className = 'glass rounded-xl p-3 scene-enter';
+        node.innerHTML = `<div class="flex items-center gap-2 text-[11px] text-${l.color}-400 mb-1"><span>${l.glyph}</span><span class="font-semibold uppercase tracking-wider">${l.who}</span></div><div class="text-white/80 leading-snug">${l.txt}</div>`;
+        list.appendChild(node);
+        list.scrollTop = list.scrollHeight;
+      }, 1200 + k*900);
+    });
+  }
+}
+
+/* S2 */
+function renderS2(root){
+  setActive(['pedagogy','verifier','curator']); setPalette('default');
+  root.innerHTML = `
+    <div class="h-full grid grid-cols-12 gap-6">
+      <section class="col-span-8 glass-strong rounded-3xl p-8 relative overflow-hidden">
+        <div class="chip text-white/70 mb-4 inline-flex">Scene 2 · The Council</div>
+        <h2 class="text-4xl font-bold tracking-tight">Three agents. One contract.</h2>
+        <p class="text-white/55 mt-2 max-w-2xl">Watch them negotiate the rubric in front of you. No magic. No hidden prompts.</p>
+        <div class="mt-8 grid grid-cols-3 gap-4">
+          ${[
+            {n:'Pedagogy', g:'🧭', c:'focus', q:"How do we know she's ready?"},
+            {n:'Verifier',  g:'✅', c:'good',  q:'Make it observable, falsifiable, fair.'},
+            {n:'Curator',   g:'📚', c:'emp',   q:'Tie each criterion to a real-world artefact.'},
+          ].map(a=>`
+            <div class="glass rounded-2xl p-4 border border-${a.c}-500/30">
+              <div class="flex items-center gap-2"><span class="text-2xl">${a.g}</span><span class="font-semibold">${a.n}</span></div>
+              <div class="mt-2 text-sm text-white/65 italic">"${a.q}"</div>
+            </div>`).join('')}
+        </div>
+        <div class="mt-8">
+          <div class="flex items-center justify-between text-xs text-white/55 uppercase tracking-wider mb-2">
+            <span>Success criteria · v1 → v2</span>
+            <span>auto-converging · <span id="criteriaPct">0%</span> objective</span>
+          </div>
+          <div class="progress mb-5"><div id="critProg" style="width:0%"></div></div>
+          <div id="critList" class="space-y-3"></div>
+        </div>
+        <div class="absolute bottom-6 right-8 text-xs text-white/40">All edits reversible · revision history kept · ADR-003</div>
+      </section>
+      <aside class="col-span-4 glass-strong rounded-3xl p-6 flex flex-col">
+        <div class="text-white/60 text-xs uppercase tracking-wider mb-3">Why this matters</div>
+        <div class="space-y-3 text-sm">
+          <div class="glass rounded-xl p-3"><b class="text-white">No subjective targets.</b> "Feel confident" gets transformed into a measurable artefact.</div>
+          <div class="glass rounded-xl p-3"><b class="text-white">Negotiation, not dictation.</b> Maya can challenge any criterion — it's <i>her</i> contract.</div>
+          <div class="glass rounded-xl p-3"><b class="text-white">Anti-Goodhart.</b> Verifier flags metrics that would game the goal.</div>
+        </div>
+        <div class="mt-auto pt-6">
+          <div class="text-white/40 text-[11px] uppercase tracking-wider mb-2">Diff highlight</div>
+          <div class="font-mono text-xs glass rounded-xl p-3 leading-relaxed">
+            <div class="text-red-400/80">- "feel confident in system design"</div>
+            <div class="text-good-400">+ design URL shortener at whiteboard</div>
+            <div class="text-good-400">+ defend 3 trade-offs to senior peer</div>
+            <div class="text-good-400">+ deadline 2026-05-27 · rubric attached</div>
+          </div>
+        </div>
+      </aside>
+    </div>`;
+  const stages = [
+    { v:'feel confident in system design', cls:'border-red-400/40 text-white/60', tag:'⚠ subjective' },
+    { v:'pass a mock interview',           cls:'border-flow-400/40',                tag:'~ partial' },
+    { v:'design URL shortener at whiteboard, defend trade-offs to peer', cls:'border-good-400/40', tag:'✓ objective' },
+  ];
+  const list = document.getElementById('critList');
+  const prog = document.getElementById('critProg');
+  const pct = document.getElementById('criteriaPct');
+  stages.forEach((s,k)=>{
+    setTimeout(()=>{
+      const row = document.createElement('div');
+      row.className = `glass rounded-xl p-4 flex items-center justify-between scene-enter border ${s.cls}`;
+      row.innerHTML = `<div class="text-base font-medium">"${s.v}"</div><div class="chip">${s.tag}</div>`;
+      list.appendChild(row);
+      const p = Math.round(((k+1)/stages.length)*100);
+      prog.style.width = p+'%'; pct.textContent = p+'%';
+      if(k===stages.length-1) awardTokens(10);
+    }, 600 + k*1200);
+  });
+}
+
+/* S3 */
+function renderS3(root){
+  setActive(['curator','pedagogy']); setPalette('default');
+  root.innerHTML = `
+    <div class="h-full grid grid-cols-12 gap-6">
+      <section class="col-span-8 glass-strong rounded-3xl p-6 relative overflow-hidden">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="chip text-white/70 mb-3 inline-flex">Scene 3 · Living knowledge graph</div>
+            <h2 class="text-4xl font-bold tracking-tight">A map that grows with her.</h2>
+            <p class="text-white/55 mt-2 max-w-2xl">Every concept links to the artefact that proves it. Every gap is visible.</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="chip border-good-500/40 text-good-400">12 mastered</span>
+            <span class="chip border-flow-500/40 text-flow-400">5 in progress</span>
+            <span class="chip border-white/15 text-white/60">7 queued</span>
+          </div>
+        </div>
+        <div class="mt-4 relative" style="height: calc(100% - 100px);">
+          <svg id="kg" viewBox="0 0 900 540" class="w-full h-full">
+            <defs>
+              <radialGradient id="node-good" cx=".4" cy=".4">
+                <stop offset="0%" stop-color="#34d399" stop-opacity=".9"/>
+                <stop offset="100%" stop-color="#065f46" stop-opacity=".4"/>
+              </radialGradient>
+              <radialGradient id="node-flow" cx=".4" cy=".4">
+                <stop offset="0%" stop-color="#fbbf24" stop-opacity=".9"/>
+                <stop offset="100%" stop-color="#92400e" stop-opacity=".4"/>
+              </radialGradient>
+              <radialGradient id="node-q" cx=".4" cy=".4">
+                <stop offset="0%" stop-color="#a78bfa" stop-opacity=".7"/>
+                <stop offset="100%" stop-color="#312e81" stop-opacity=".3"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+      </section>
+      <aside class="col-span-4 grid grid-rows-2 gap-6">
+        <div class="glass-strong rounded-3xl p-6">
+          <div class="text-white/60 text-xs uppercase tracking-wider mb-3">Curator picked</div>
+          <div class="space-y-3">
+            <div class="glass rounded-xl p-3">
+              <div class="flex items-center justify-between text-xs text-white/45"><span>📄 paper</span><span>17 min</span></div>
+              <div class="mt-1 font-semibold">Designing Data-Intensive Apps · ch. 7</div>
+              <div class="text-xs text-white/55 mt-1">Why? Best signal-to-noise on consistency models for your level.</div>
+            </div>
+            <div class="glass rounded-xl p-3">
+              <div class="flex items-center justify-between text-xs text-white/45"><span>🎬 video</span><span>9 min</span></div>
+              <div class="mt-1 font-semibold">Tinyurl architecture walkthrough</div>
+              <div class="text-xs text-white/55 mt-1">2× speed allowed. Quiz at 4:30.</div>
+            </div>
+            <div class="glass rounded-xl p-3">
+              <div class="flex items-center justify-between text-xs text-white/45"><span>🧪 live system</span><span>15 min</span></div>
+              <div class="mt-1 font-semibold">Real bit.ly latency dashboard</div>
+              <div class="text-xs text-white/55 mt-1">You'll observe a real consistency trade-off, not read about it.</div>
+            </div>
+          </div>
+        </div>
+        <div class="glass-strong rounded-3xl p-6">
+          <div class="text-white/60 text-xs uppercase tracking-wider mb-3">Curator filtered out</div>
+          <div class="text-sm text-white/70">14 results dropped — duplicates, SEO-listicles, outdated patterns.</div>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-[11px]">
+            <div class="glass rounded-lg px-2 py-1.5 text-white/40 line-through">Top 10 system design tips</div>
+            <div class="glass rounded-lg px-2 py-1.5 text-white/40 line-through">Build TinyURL in 5 min!</div>
+            <div class="glass rounded-lg px-2 py-1.5 text-white/40 line-through">2017 sharding article</div>
+            <div class="glass rounded-lg px-2 py-1.5 text-white/40 line-through">Generic "scaling" blog</div>
+          </div>
+          <div class="mt-4 flex items-center gap-2 text-xs text-white/50">
+            <span class="w-2 h-2 rounded-full bg-emp-400"></span>
+            <span>Curator log auditable · why each was dropped</span>
+          </div>
+        </div>
+      </aside>
+    </div>`;
+  const svg = document.getElementById('kg');
+  const nodes = [
+    { id:'goal', x:450, y:270, r:42, label:'System Design', kind:'goal' },
+    { id:'cache', x:230, y:140, r:28, label:'Caching', kind:'good' },
+    { id:'shard', x:230, y:400, r:28, label:'Sharding', kind:'flow' },
+    { id:'cons',  x:680, y:130, r:28, label:'Consistency', kind:'flow' },
+    { id:'cap',   x:720, y:400, r:28, label:'CAP', kind:'q' },
+    { id:'lb',    x:120, y:270, r:24, label:'Load balance', kind:'good' },
+    { id:'queue', x:780, y:270, r:24, label:'Queues', kind:'q' },
+    { id:'art',   x:450, y:480, r:30, label:'URL shortener', kind:'flow' },
+  ];
+  const edges = [
+    ['goal','cache'],['goal','shard'],['goal','cons'],['goal','cap'],
+    ['cache','lb'],['cons','cap'],['cap','queue'],['shard','art'],['cache','art'],['cons','art']
+  ];
+  edges.forEach(([a,b],i)=>{
+    const A = nodes.find(n=>n.id===a), B = nodes.find(n=>n.id===b);
+    const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',A.x); ln.setAttribute('y1',A.y);
+    ln.setAttribute('x2',A.x); ln.setAttribute('y2',A.y);
+    ln.setAttribute('stroke','rgba(255,255,255,.18)');
+    ln.setAttribute('stroke-width','1.2');
+    ln.classList.add('kg-edge');
+    svg.appendChild(ln);
+    setTimeout(()=>{
+      ln.animate(
+        [{ x2: A.x, y2: A.y }, { x2: B.x, y2: B.y }],
+        { duration: 700, fill: 'forwards', easing: 'cubic-bezier(.2,.7,.2,1)' }
+      );
+      ln.setAttribute('x2', B.x); ln.setAttribute('y2', B.y);
+    }, 200 + i*120);
+  });
+  nodes.forEach((n,i)=>{
+    setTimeout(()=>{
+      const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+      const fill = n.kind==='goal' ? 'url(#node-q)' : (n.kind==='good' ? 'url(#node-good)' : (n.kind==='flow' ? 'url(#node-flow)' : 'url(#node-q)'));
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx', n.x); c.setAttribute('cy', n.y); c.setAttribute('r', 0);
+      c.setAttribute('fill', fill);
+      c.setAttribute('stroke','rgba(255,255,255,.25)'); c.setAttribute('stroke-width','1');
+      g.appendChild(c);
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x', n.x); t.setAttribute('y', n.y + n.r + 16);
+      t.setAttribute('text-anchor','middle'); t.setAttribute('fill','rgba(255,255,255,.85)');
+      t.setAttribute('font-size', n.id==='goal' ? '16' : '12');
+      t.setAttribute('font-weight', n.id==='goal' ? '700':'500');
+      t.textContent = n.label;
+      g.appendChild(t);
+      svg.appendChild(g);
+      c.animate([{ r: 0 }, { r: n.r }], { duration: 600, fill:'forwards', easing:'cubic-bezier(.2,.9,.2,1)' });
+      c.setAttribute('r', n.r);
+    }, 600 + i*150);
+  });
+}
+
+/* S4 */
+function renderS4(root){
+  setActive(['companion','pedagogy']); setPalette('flow');
+  root.innerHTML = `
+    <div class="h-full grid grid-cols-12 gap-6">
+      <section class="col-span-8 glass-strong rounded-3xl p-8 relative overflow-hidden">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="chip text-white/70 mb-3 inline-flex">Scene 4 · Today</div>
+            <h2 class="text-4xl font-bold tracking-tight">Maya opens the app · 09:31.</h2>
+            <p class="text-white/55 mt-2">Three cards. One decision. Companion respects her 45 minutes.</p>
+          </div>
+          <div class="text-right">
+            <div class="text-[11px] uppercase tracking-wider text-white/45">Streak</div>
+            <div class="text-3xl font-black text-flow-400">11 days</div>
+          </div>
+        </div>
+        <div id="todayCards" class="mt-8 grid grid-cols-3 gap-4"></div>
+        <div class="mt-8 glass rounded-2xl p-5">
+          <div class="text-[11px] uppercase tracking-wider text-white/45 mb-2">Companion · 09:31</div>
+          <div id="companionLine" class="text-lg leading-relaxed">"Yesterday you nailed caching. Today is the next step. Want to commit, or shrink it?"</div>
+          <div class="mt-4 flex items-center gap-3">
+            <button id="btnAccept" class="stage-btn primary rounded-xl px-4 py-2.5 text-sm font-semibold">✓ Commit · start the 25-min block</button>
+            <button id="btnStruggle" class="stage-btn rounded-xl px-4 py-2.5 text-sm">😮‍💨 I'm stuck — too much</button>
+            <button class="stage-btn rounded-xl px-4 py-2.5 text-sm">Shrink to 10 min</button>
+          </div>
+        </div>
+      </section>
+      <aside class="col-span-4 glass-strong rounded-3xl p-6 flex flex-col">
+        <div class="text-white/60 text-xs uppercase tracking-wider mb-3">Why these three?</div>
+        <div class="space-y-3 text-sm">
+          <div class="glass rounded-xl p-3"><b>Energy-aware:</b> high-effort task lands at her 09:30 peak.</div>
+          <div class="glass rounded-xl p-3"><b>Spaced:</b> caching review sits at the optimal forgetting curve point.</div>
+          <div class="glass rounded-xl p-3"><b>Bounded:</b> total ≤ 45 min. Companion will refuse to add more.</div>
+        </div>
+        <div class="mt-auto pt-6">
+          <div class="text-white/40 text-[11px] uppercase tracking-wider mb-2">Anti-pattern blocked</div>
+          <div class="text-sm text-white/70">A 4-hour "study marathon" was suggested by a naïve plan. Pedagogy rejected it. <span class="text-flow-400">Endurance ≠ understanding.</span></div>
+        </div>
+      </aside>
+    </div>`;
+  const cards = [
+    { t:'Spaced review', d:'Caching · 5 questions',                     tag:'8 min',  col:'good' },
+    { t:'New concept',   d:'Sharding strategies — read & summarize',    tag:'25 min', col:'flow', main:true },
+    { t:'Reflection',    d:'1 min: what tripped you yesterday?',        tag:'2 min',  col:'focus' },
+  ];
+  const c = document.getElementById('todayCards');
+  cards.forEach((card,i)=>{
+    const el = document.createElement('div');
+    el.className = `glass rounded-2xl p-5 border ${card.main?'border-flow-400/50 ring-1 ring-flow-400/30':'border-white/10'} scene-enter`;
+    el.style.animationDelay = (i*120)+'ms';
+    el.innerHTML = `
+      <div class="flex items-center justify-between text-xs">
+        <span class="chip border-${card.col}-500/40 text-${card.col}-400">${card.t}</span>
+        <span class="text-white/50">${card.tag}</span>
+      </div>
+      <div class="mt-4 text-lg font-semibold leading-snug">${card.d}</div>
+      <div class="mt-6 flex items-center justify-between text-xs text-white/40">
+        <span>${card.main?'Main task':'Supporting'}</span>
+        <span>+${card.main?15:5} ⭐</span>
+      </div>`;
+    c.appendChild(el);
+  });
+  document.getElementById('btnAccept').onclick = ()=>{
+    awardTokens(15);
+    document.getElementById('companionLine').textContent = '"Locked in. 25-minute focus block starting. I\'ll guard your inbox."';
+  };
+  document.getElementById('btnStruggle').onclick = ()=> next();
+}
+
+/* S5 */
+function renderS5(root){
+  setActive(['empathy','companion','pedagogy']); setPalette('empathy');
+  root.innerHTML = `
+    <div class="h-full grid grid-cols-12 gap-6">
+      <section class="col-span-7 glass-strong rounded-3xl p-8 relative overflow-hidden">
+        <div class="absolute -top-24 -right-16 w-[26rem] h-[26rem] rounded-full bg-emp-500/30 blur-3xl"></div>
+        <div class="relative">
+          <div class="chip text-white/70 mb-3 inline-flex">Scene 5 · Empathy loop</div>
+          <h2 class="text-4xl font-bold tracking-tight">She said "stuck". The whole system shifted.</h2>
+          <p class="text-white/55 mt-2 max-w-2xl">Notice the palette. The plan. The tone. The pace. Nothing pushes harder.</p>
+          <div class="mt-8 grid grid-cols-2 gap-4">
+            <div class="glass rounded-2xl p-5">
+              <div class="text-[11px] uppercase tracking-wider text-emp-400 mb-2 flex items-center gap-2">
+                <span class="relative w-2 h-2 rounded-full bg-emp-400 pulse-dot"></span> Empathy detected
+              </div>
+              <ul class="space-y-2 text-sm">
+                <li class="flex justify-between"><span class="text-white/70">Frustration markers</span><span class="text-emp-400">↑↑</span></li>
+                <li class="flex justify-between"><span class="text-white/70">Cognitive load</span><span class="text-emp-400">overflow</span></li>
+                <li class="flex justify-between"><span class="text-white/70">Self-talk valence</span><span class="text-emp-400">negative</span></li>
+                <li class="flex justify-between"><span class="text-white/70">Action recommended</span><span class="text-emp-400">decompose & encourage</span></li>
+              </ul>
+            </div>
+            <div class="glass rounded-2xl p-5">
+              <div class="text-[11px] uppercase tracking-wider text-focus-400 mb-2">Plan auto-adjusted</div>
+              <div class="font-mono text-xs space-y-1">
+                <div class="text-red-400/80 line-through">25 min — sharding strategies (read)</div>
+                <div class="text-good-400">10 min — one shard, one diagram, one win</div>
+                <div class="text-good-400">+ optional: 5-min concept video</div>
+                <div class="text-good-400">+ Companion check-in at min 6</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 glass rounded-2xl p-6 border border-emp-400/30">
+            <div class="text-[11px] uppercase tracking-wider text-emp-400 mb-2">Empathy speaks · with you, not at you</div>
+            <div class="text-2xl font-medium leading-snug">"Stuck is data, not failure. Sharding ate me alive the first three times too. Let's shrink it: one diagram, one shard, ten minutes. <span class="text-emp-400">You don't have to feel ready to start.</span>"</div>
+            <div class="mt-4 flex items-center gap-3">
+              <button id="btnRecover" class="stage-btn primary rounded-xl px-4 py-2.5 text-sm font-semibold">Try the 10-minute version</button>
+              <button class="stage-btn rounded-xl px-4 py-2.5 text-sm">Take the day off · streak protected</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <aside class="col-span-5 grid grid-rows-2 gap-6">
+        <div class="glass-strong rounded-3xl p-6">
+          <div class="text-white/60 text-xs uppercase tracking-wider mb-3">Guardrails active</div>
+          <div class="space-y-3 text-sm">
+            <div class="glass rounded-xl p-3 border border-emp-400/30"><b>No false praise.</b> Empathy never says "you're amazing" without evidence.</div>
+            <div class="glass rounded-xl p-3 border border-emp-400/30"><b>No shame.</b> Setbacks are framed as data — never as failure.</div>
+            <div class="glass rounded-xl p-3 border border-emp-400/30"><b>No pushing.</b> When struggle persists, the system shrinks the task — not the person.</div>
+            <div class="glass rounded-xl p-3 border border-emp-400/30"><b>Streak ≠ pressure.</b> Recovery days protect the streak. By design.</div>
+          </div>
+        </div>
+        <div class="glass-strong rounded-3xl p-6">
+          <div class="text-white/60 text-xs uppercase tracking-wider mb-3">What changed in the UI</div>
+          <ul class="text-sm space-y-2 text-white/75">
+            <li>● Palette shifted to <span class="text-emp-400">cyan</span> — calmer perceived urgency</li>
+            <li>● Animations slowed by 30%</li>
+            <li>● Token reward rephrased: <i>"recovery"</i> not <i>"reward"</i></li>
+            <li>● Notifications muted for 60 minutes</li>
+            <li>● Streak frozen — not lost</li>
+          </ul>
+          <div class="mt-4 text-[11px] text-white/40">SDD doc: <span class="font-mono">07_EMPATHY_LOOP.md</span></div>
+        </div>
+      </aside>
+    </div>`;
+  document.getElementById('btnRecover').onclick = ()=>{ awardTokens(15); next(); };
+}
+
+/* S6 */
+function renderS6(root){
+  setActive(['verifier','pedagogy']); setPalette('flow');
+  root.innerHTML = `
+    <div class="h-full grid grid-cols-12 gap-6">
+      <section class="col-span-7 glass-strong rounded-3xl p-10 relative overflow-hidden">
+        <div class="absolute -top-32 -left-16 w-[30rem] h-[30rem] rounded-full bg-flow-500/25 blur-3xl"></div>
+        <div class="absolute -bottom-32 -right-12 w-[26rem] h-[26rem] rounded-full bg-focus-500/25 blur-3xl"></div>
+        <div class="relative">
+          <div class="chip text-white/70 mb-3 inline-flex">Scene 7 · Verifiable credential</div>
+          <h2 class="text-5xl font-black tracking-tight leading-tight">She can prove it.<br/><span class="bg-gradient-to-r from-flow-400 to-focus-400 bg-clip-text text-transparent">Anywhere.</span></h2>
+          <p class="text-white/60 mt-3 max-w-2xl text-lg">Not a course completion. A signed, portable, falsifiable claim — Open Badges 3.0 + W3C Verifiable Credentials.</p>
+          <div class="mt-10 mx-auto max-w-xl rounded-3xl p-6 glass-strong badge-glow border border-flow-400/30">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-flow-400 to-flow-500 grid place-items-center text-3xl">🎖️</div>
+                <div>
+                  <div class="text-xs uppercase tracking-wider text-white/50">Verifiable Credential</div>
+                  <div class="text-xl font-bold">System Design · Foundations</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] uppercase tracking-wider text-white/40">issued</div>
+                <div class="text-sm font-mono">2026-05-27</div>
+              </div>
+            </div>
+            <div class="mt-5 grid grid-cols-2 gap-3 text-xs">
+              <div class="glass rounded-lg p-2.5"><div class="text-white/45">Issued to</div><div class="font-medium">did:agora:maya-chen</div></div>
+              <div class="glass rounded-lg p-2.5"><div class="text-white/45">Issuer</div><div class="font-medium">AGORA Academy</div></div>
+              <div class="glass rounded-lg p-2.5"><div class="text-white/45">Evidence</div><div class="font-medium">whiteboard walkthrough · peer-graded</div></div>
+              <div class="glass rounded-lg p-2.5"><div class="text-white/45">Rubric</div><div class="font-medium">5/5 trade-offs defended</div></div>
+            </div>
+            <div class="mt-5 grid grid-cols-3 gap-3 items-center">
+              <div class="col-span-2">
+                <div class="text-[10px] uppercase tracking-wider text-white/40 mb-1">Signature (ed25519)</div>
+                <div class="font-mono text-[10px] break-all text-white/55">z6MkpTHR8VNsBxYAAWHut2Geadd9jSdoo16PsrR9RZL3kx4Yj3w...</div>
+              </div>
+              <div class="ml-auto">
+                <div class="w-20 h-20 grid grid-cols-8 grid-rows-8 gap-px bg-white p-1 rounded-md">
+                  ${Array.from({length:64}).map(()=>`<div class="${Math.random()>0.5?'bg-black':'bg-white'}"></div>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 grid grid-cols-3 gap-3 text-sm max-w-xl mx-auto">
+            <button class="stage-btn rounded-xl px-3 py-2.5">Add to LinkedIn</button>
+            <button class="stage-btn rounded-xl px-3 py-2.5">Share to GitHub</button>
+            <button class="stage-btn primary rounded-xl px-3 py-2.5 font-semibold">Download .json</button>
+          </div>
+        </div>
+      </section>
+      <aside class="col-span-5 grid grid-rows-2 gap-6">
+        <div class="glass-strong rounded-3xl p-6">
+          <div class="text-white/60 text-xs uppercase tracking-wider mb-3">Why this is different</div>
+          <div class="space-y-3 text-sm">
+            <div class="glass rounded-xl p-3"><b>Tied to evidence.</b> Anyone can audit the artefact behind the badge.</div>
+            <div class="glass rounded-xl p-3"><b>Portable.</b> Works in any wallet, any LMS, any HR system that speaks OB 3.0.</div>
+            <div class="glass rounded-xl p-3"><b>Revocable.</b> If the underlying claim is later disputed, the badge can be marked accordingly.</div>
+            <div class="glass rounded-xl p-3"><b>Maya owns it.</b> Not the school. Not the platform.</div>
+          </div>
+        </div>
+        <div class="glass-strong rounded-3xl p-6 flex flex-col">
+          <div class="text-white/60 text-xs uppercase tracking-wider mb-3">21 days · summary</div>
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="glass rounded-xl p-3"><div class="text-3xl font-black text-flow-400">19</div><div class="text-[11px] text-white/55 uppercase tracking-wider">streak</div></div>
+            <div class="glass rounded-xl p-3"><div class="text-3xl font-black text-good-400">12</div><div class="text-[11px] text-white/55 uppercase tracking-wider">concepts</div></div>
+            <div class="glass rounded-xl p-3"><div class="text-3xl font-black text-focus-400">${state.tokens||40}</div><div class="text-[11px] text-white/55 uppercase tracking-wider">tokens</div></div>
+          </div>
+          <div class="mt-5 text-sm text-white/70">
+            <div class="font-semibold">She didn't grind. The system met her where she was.</div>
+            <div class="mt-2 text-white/55">Three recovery days. One pivot. One badge that means something.</div>
+          </div>
+          <div class="mt-auto pt-6 text-[11px] text-white/40">
+            Built spec-first. 21 SDD docs · 5 ADRs · 6 agent prompts · auditable end-to-end.
+          </div>
+        </div>
+      </aside>
+    </div>`;
+}
+
+function next(){
+  if(state.scene < SCENES.length-1){ state.scene++; renderScene(); }
+  else { state = { scene:0, tokens:0, active:new Set(), palette:'default' };
+    document.getElementById('tokenCount').textContent='0'; setPalette('default'); renderScene(); }
+}
+function prev(){ if(state.scene>0){ state.scene--; renderScene(); } }
+document.getElementById('btnNext').onclick = next;
+document.getElementById('btnPrev').onclick = prev;
+document.getElementById('btnRestart').onclick = ()=>{
+  state = { scene:0, tokens:0, active:new Set(), palette:'default' };
+  document.getElementById('tokenCount').textContent='0'; setPalette('default'); renderScene();
+};
+document.getElementById('btnFs').onclick = ()=>{
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+};
+window.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight' || e.key===' '){ e.preventDefault(); next(); }
+  if(e.key==='ArrowLeft') prev();
+  if(e.key.toLowerCase()==='f') document.getElementById('btnFs').click();
+  if(e.key.toLowerCase()==='r') document.getElementById('btnRestart').click();
+});
+
+renderAgentBar();
+renderScene();
+</script>
+</body>
+</html>
